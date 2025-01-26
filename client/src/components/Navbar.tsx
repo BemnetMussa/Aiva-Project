@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Bell, User } from 'lucide-react';
+import { Bell, User, MessageCircle } from 'lucide-react';
 
 const Navbar = () => {
   return (
@@ -10,52 +10,38 @@ const Navbar = () => {
           {/* Logo and Brand */}
           <div className="flex items-start">
             <Link to="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8">
-                <svg viewBox="0 0 24 24" className="w-full h-full">
-                  <path 
-                    d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" 
-                    fill="none" 
-                    stroke="currentColor" 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round" 
-                    strokeWidth="2"
-                  />
-                </svg>
-              </div>
-              <span className="text-xl font-semibold text-gray-900">Ziemny</span>
+              <img src="/logo.png" alt="logo" className='w-28 h-14'/>
             </Link>
           </div>
 
           {/* Navigation Links */}
           <div className="hidden md:flex items-center space-x-8">
             <Link 
-              to="/accomodations" 
-              className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium"
+              to="/" 
+              className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium  hover:border-b-4 hover:border-primary transition ease-out duration-500"
             >
-              Accommodations
+              Home
             </Link>
             <Link 
               to="/bookings" 
-              className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium"
-            >
-              Bookings
-            </Link>
-            <Link 
-              to="/favourites" 
-              className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium"
+              className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium  hover:border-b-4 hover:border-primary transition ease-out duration-500"
             >
               Favourites
             </Link>
             <Link 
               to="/host" 
-              className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium"
+              className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium  hover:border-b-4 hover:border-primary transition ease-out duration-500"
             >
-              Host accommodations
+              Host Accomedations
             </Link>
+       
           </div>
 
           {/* Right side icons */}
           <div className="flex items-end space-x-4">
+            <button className="p-2 text-gray-600 hover:text-gray-900 rounded-full hover:bg-gray-100">
+              <MessageCircle className="w-5 h-5" />
+            </button>
             <button className="p-2 text-gray-600 hover:text-gray-900 rounded-full hover:bg-gray-100">
               <Bell className="w-5 h-5" />
             </button>
@@ -66,7 +52,14 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile menu button */}
+
+
+
+
+
+
+{/* 
+      
       <div className="md:hidden">
         <button className="mobile-menu-button p-4 focus:outline-none">
           <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -74,8 +67,11 @@ const Navbar = () => {
           </svg>
         </button>
       </div>
+ */}
 
-      {/* Mobile menu */}
+
+
+      {/* Mobile menu
       <div className="hidden md:hidden">
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
           <Link 
@@ -103,7 +99,7 @@ const Navbar = () => {
             Host accommodations
           </Link>
         </div>
-      </div>
+      </div> */}
     </nav>
   );
 };
