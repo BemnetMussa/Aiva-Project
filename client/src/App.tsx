@@ -1,7 +1,7 @@
 import * as React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ZimanyHome } from "./pages/MainPage";
-import HomeAccomodation from "./pages/HostAccomodation";
+import HomeAccomodation from "./pages/HostAccomodationPage";
 
 const App = () => {
   return (

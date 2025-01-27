@@ -9,8 +9,8 @@ const PropertyCard = ({
   bathrooms = 2,
   squareFeet = 95,
   description = "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Sapiente quo odit et porro aut voluptatem saepe suscipit accusamus voluptas quam! ",
-  propertyType = 'Rent',
-  propertyStatus = 'Available'
+  type = 'Rent',
+  status = 'Available'
   
 }) => {
   return (
@@ -36,11 +36,11 @@ const PropertyCard = ({
               <path d="M13.0916 7.20002C13.0916 10.7131 10.3875 13.5182 7.10324 13.5182C3.81903 13.5182 1.11487 10.7131 1.11487 7.20002C1.11487 3.68693 3.81903 0.881836 7.10324 0.881836C10.3875 0.881836 13.0916 3.68693 13.0916 7.20002ZM4.31394 7.20002C4.31394 8.78112 5.53968 10.1057 7.10324 10.1057C8.6668 10.1057 9.89254 8.78112 9.89254 7.20002C9.89254 5.61891 8.6668 4.29435 7.10324 4.29435C5.53968 4.29435 4.31394 5.61891 4.31394 7.20002Z" fill="#00FF0D" stroke="black"/>
           </svg>
 
-          <p>{propertyStatus}</p>
+          <p>{status}</p>
         </div>
 
         <div className="absolute bottom-3 left-4 p-2 bg-white rounded-full shadow-md" >
-          <p>{propertyType}</p>
+          <p>{type}</p>
         </div>
 
         {/* More Options */}
