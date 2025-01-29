@@ -20,10 +20,14 @@ connectDB();
 // Routes
 app.use("/api/users",  userRoutes);
 
-// Default route
+
+
+
 app.get("/", (req: Request, res: Response) => {
   res.send("API is running...");
 });
+
+
 
 // Start server
 const PORT = process.env.PORT || 5000;

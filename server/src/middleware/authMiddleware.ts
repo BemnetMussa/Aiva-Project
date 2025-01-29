@@ -11,6 +11,7 @@ export const protect = (
   res: Response,
   next: NextFunction
 ): void => {
+  console.log("protect middleware");
   const token = req.headers.authorization?.split(" ")[1];
 
   if (!token) {
@@ -20,6 +21,7 @@ export const protect = (
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as UserPayload;
+
     (req as any).user = decoded;
     next();
   } catch (error) {
