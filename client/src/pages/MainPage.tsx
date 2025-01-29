@@ -1,12 +1,11 @@
 import * as React from "react";
-import  PropertyCard  from "../components/PropertyCard";
-import  SearchForm  from "../components/SearchForm";
+import PropertyCard from "../components/PropertyCard";
+import SearchForm from "../components/SearchForm";
 import { Pagination } from "../components/Pagination";
 import { SearchFormData } from "../components/types";
 import Navbar from "../components/Navbar";
 import { Link } from "react-router-dom";
 import Footer from "../components/Footer";
-
 
 const propertyData = [
   {
@@ -23,7 +22,8 @@ const propertyData = [
     squareFeet: 95,
     rating: 5.0,
     pricePerNight: 149,
-    description: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolor vero voluptatem, quia odio consectetur sint molestiae assumenda minus rem perspiciatis, sunt quibusdam sequi ad laboriosam illum. Vel, illum quisquam ad unde velit cumque iure consectetur qui praesentium, officia nesciunt perspiciatis? Earum possimus nihil ratione ab molestias deserunt, illo eum odit vero, illum sit nesciunt commodi unde nisi consectetur beatae quisquam. Accusamus, perferendis soluta. Labore necessitatibus velit mollitia quasi, laborum doloremque temporibus maxime molestias esse quis minima voluptates, reiciendis, cupiditate alias obcaecati molestiae nostrum facilis dolores ducimus impedit ipsam neque tempora illum! Cumque explicabo, laudantium nihil voluptatibus sint facilis ea quaerat. ',
+    description:
+      "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolor vero voluptatem, quia odio consectetur sint molestiae assumenda minus rem perspiciatis, sunt quibusdam sequi ad laboriosam illum. Vel, illum quisquam ad unde velit cumque iure consectetur qui praesentium, officia nesciunt perspiciatis? Earum possimus nihil ratione ab molestias deserunt, illo eum odit vero, illum sit nesciunt commodi unde nisi consectetur beatae quisquam. Accusamus, perferendis soluta. Labore necessitatibus velit mollitia quasi, laborum doloremque temporibus maxime molestias esse quis minima voluptates, reiciendis, cupiditate alias obcaecati molestiae nostrum facilis dolores ducimus impedit ipsam neque tempora illum! Cumque explicabo, laudantium nihil voluptatibus sint facilis ea quaerat. ",
     bedroomIconUrl:
       "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/aa7dcd1fe32a40832afea7e3d37e922a55e6c5335edfeb813d2e3ac08d3b8b6f?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
     bathroomIconUrl:
@@ -33,7 +33,7 @@ const propertyData = [
     ratingIconUrl:
       "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/60824f7a6a30c3a5c74328ef290634fec4022ec6dff15d339deede88ce7f7a4b?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
   },
-   {
+  {
     imageUrl:
       "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/9551b30ffd791b24c187aced272c5c6ff64143110467cc272de2a8ebba209e1b?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
     heartIconUrl:
@@ -47,7 +47,8 @@ const propertyData = [
     squareFeet: 95,
     rating: 5.0,
     pricePerNight: 149,
-     description: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolor vero voluptatem, quia odio consectetur sint molestiae assumenda minus rem perspiciatis, sunt quibusdam sequi ad laboriosam illum. Vel, illum quisquam ad unde velit cumque iure consectetur qui praesentium, officia nesciunt perspiciatis? Earum possimus nihil ratione ab molestias deserunt, illo eum odit vero, illum sit nesciunt commodi unde nisi consectetur beatae quisquam. Accusamus, perferendis soluta. Labore necessitatibus velit mollitia quasi, laborum doloremque temporibus maxime molestias esse quis minima voluptates, reiciendis, cupiditate alias obcaecati molestiae nostrum facilis dolores ducimus impedit ipsam neque tempora illum! Cumque explicabo, laudantium nihil voluptatibus sint facilis ea quaerat. ',
+    description:
+      "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolor vero voluptatem, quia odio consectetur sint molestiae assumenda minus rem perspiciatis, sunt quibusdam sequi ad laboriosam illum. Vel, illum quisquam ad unde velit cumque iure consectetur qui praesentium, officia nesciunt perspiciatis? Earum possimus nihil ratione ab molestias deserunt, illo eum odit vero, illum sit nesciunt commodi unde nisi consectetur beatae quisquam. Accusamus, perferendis soluta. Labore necessitatibus velit mollitia quasi, laborum doloremque temporibus maxime molestias esse quis minima voluptates, reiciendis, cupiditate alias obcaecati molestiae nostrum facilis dolores ducimus impedit ipsam neque tempora illum! Cumque explicabo, laudantium nihil voluptatibus sint facilis ea quaerat. ",
 
     bedroomIconUrl:
       "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/aa7dcd1fe32a40832afea7e3d37e922a55e6c5335edfeb813d2e3ac08d3b8b6f?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
@@ -58,7 +59,7 @@ const propertyData = [
     ratingIconUrl:
       "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/60824f7a6a30c3a5c74328ef290634fec4022ec6dff15d339deede88ce7f7a4b?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
   },
-   {
+  {
     imageUrl:
       "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/9551b30ffd791b24c187aced272c5c6ff64143110467cc272de2a8ebba209e1b?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
     heartIconUrl:
@@ -81,7 +82,7 @@ const propertyData = [
     ratingIconUrl:
       "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/60824f7a6a30c3a5c74328ef290634fec4022ec6dff15d339deede88ce7f7a4b?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
   },
-   {
+  {
     imageUrl:
       "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/9551b30ffd791b24c187aced272c5c6ff64143110467cc272de2a8ebba209e1b?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
     heartIconUrl:
@@ -104,7 +105,7 @@ const propertyData = [
     ratingIconUrl:
       "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/60824f7a6a30c3a5c74328ef290634fec4022ec6dff15d339deede88ce7f7a4b?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
   },
-   {
+  {
     imageUrl:
       "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/9551b30ffd791b24c187aced272c5c6ff64143110467cc272de2a8ebba209e1b?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
     heartIconUrl:
@@ -127,7 +128,7 @@ const propertyData = [
     ratingIconUrl:
       "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/60824f7a6a30c3a5c74328ef290634fec4022ec6dff15d339deede88ce7f7a4b?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
   },
-   {
+  {
     imageUrl:
       "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/9551b30ffd791b24c187aced272c5c6ff64143110467cc272de2a8ebba209e1b?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
     heartIconUrl:
@@ -150,7 +151,7 @@ const propertyData = [
     ratingIconUrl:
       "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/60824f7a6a30c3a5c74328ef290634fec4022ec6dff15d339deede88ce7f7a4b?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
   },
-   {
+  {
     imageUrl:
       "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/9551b30ffd791b24c187aced272c5c6ff64143110467cc272de2a8ebba209e1b?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
     heartIconUrl:
@@ -189,8 +190,8 @@ export const ZimanyHome: React.FC = () => {
   return (
     <div className="flex overflow-hidden flex-col items-center w-full pt-14 bg-white border border-cyan-400 border-solid shadow-[0px_3px_6px_rgba(18,15,40,0.12)]">
       {/* Navbar section */}
-      <Navbar/>
-    
+      <Navbar />
+
       <div className="flex relative flex-col h-[75vh] items-center self-stretch px-20 pt-28 pb-40 w-full  text-center text-white max-md:px-5 max-md:py-24 max-md:max-w-full">
         <img
           loading="lazy"
@@ -217,17 +218,12 @@ export const ZimanyHome: React.FC = () => {
       <div className="mt-24 w-[80%]">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 ">
           {propertyData.map((property, index) => (
-            <div
-              key={index}
-              className=" "
-            >
+            <div key={index} className=" ">
               <PropertyCard {...property} />
             </div>
           ))}
         </div>
       </div>
-
-     
 
       {/* Footer section */}
       <div className="flex flex-col justify-center items-center self-stretch px-16 py-24 mt-5 bg-gray-50 max-md:px-5 max-md:max-w-full">
