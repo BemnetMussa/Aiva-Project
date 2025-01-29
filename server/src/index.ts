@@ -1,9 +1,9 @@
 import express, { Request, Response } from "express";
-import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./config/db";
 import userRoutes from "./routes/userRoutes";
+
 
 dotenv.config();
 
@@ -18,7 +18,7 @@ app.use(express.json());
 connectDB();
 
 // Routes
-app.use("/api/users", userRoutes);
+app.use("/api/users",  userRoutes);
 
 // Default route
 app.get("/", (req: Request, res: Response) => {

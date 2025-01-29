@@ -13,16 +13,16 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
     }
 
     const user = await User.create({ name, email, password });
-    
+
     res.status(201).json({ message: "User created successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Servererror" });
   }
 };
 
 export const login = async (req: Request, res: Response): Promise<void> => {
   const { email, password } = req.body;
-
+  console.log(email, password);
   try {
     const user: any = await User.findOne({ email });
     if (!user) {
@@ -31,6 +31,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     }
 
     const isMatch = await user.matchPassword(password);
+
     if (!isMatch) {
       res.status(400).json({ message: "Invalid email or password" });
       return;
