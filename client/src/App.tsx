@@ -4,6 +4,7 @@ import { ZimanyHome } from "./pages/MainPage";
 import HomeAccomodation from "./pages/HostAccomodationPage";
 import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
+import AddPropertyPage from "./pages/AddPropertyPage";
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
         <Route path="/chat" element={<div>Chat Page</div>} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/add-property" element={<AddPropertyPage />} />
       </Routes>
     </Router>
   );

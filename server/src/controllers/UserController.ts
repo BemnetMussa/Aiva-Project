@@ -3,7 +3,6 @@ import User from "../models/User";
 import Property from "../models/property";
 import { generateToken } from "../utils/generateToken";
 import { protect } from "../middleware/authMiddleware";
-import { userInfo } from "os";
 
 export const signup = async (req: Request, res: Response): Promise<void> => {
   const { name, email, password } = req.body;
@@ -40,10 +39,16 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     }
 
     const token = generateToken(user._id);
+    res.cookie("token", token, {
+      httpOnly: true,
+      // secure: process.env.NODE_ENV === "production", // Comment this out for development
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    console.log("cookie created successfully with token:", token);
 
     res.status(200).json({
       message: "Login successful",
-      token,
       user: { name: user.name, email: user.email, isAdmin: user.isAdmin },
     });
   } catch (error) {
@@ -67,35 +72,31 @@ export const addProperty = async (
     status,
   } = req.body;
 
-  protect(req, res, async () => {
-    const userId = (req as any).user?.id;
+  const userId = (req as any).user?.id; // Get the user ID from the request object
 
-    console.log((req as any).user);
-    console.log(userId);
-    try {
-      console.log(!userId);
-      if (!userId) {
-        return res
-          .status(400)
-          .json({ message: "Try again, an error occurred" });
-      }
-
-      const property = await Property.create({
-        userId,
-        title,
-        location,
-        price,
-        bedrooms,
-        bathrooms,
-        squareFeet,
-        description,
-        type,
-        status,
-      });
-
-      res.status(200).json({ message: "Property added successfully" });
-    } catch (error) {
-      res.status(500).json({ message: "Server error" });
+  try {
+    if (!userId) {
+      res.status(400).json({ message: "Try again, an error occurred" });
+      return;
     }
-  });
+
+    const property = await Property.create({
+      userId,
+      title,
+      location,
+      price,
+      bedrooms,
+      bathrooms,
+      squareFeet,
+      description,
+      type,
+      status,
+    });
+
+
+    res.status(200).json({ message: "Property added successfully", property });
+  } catch (error) {
+    console.error("Error adding property:", error); // Debugging: Log the error
+    res.status(500).json({ message: "Server error" });
+  }
 };

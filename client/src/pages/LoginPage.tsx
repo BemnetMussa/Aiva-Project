@@ -8,15 +8,16 @@ const LoginPage: React.FC = () => {
     e.preventDefault();
 
     const response = await fetch("http://localhost:5000/api/users/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      });
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        password,
+      }),
+      credentials: "include", // This is required for cookies to work
+    });
 
       if (response.ok) {
         alert("Login successful!");

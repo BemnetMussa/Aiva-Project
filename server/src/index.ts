@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./config/db";
 import userRoutes from "./routes/userRoutes";
+import cookieParser from "cookie-parser";
 
 
 dotenv.config();
@@ -10,9 +11,16 @@ dotenv.config();
 // Create Express app
 const app = express();
 
+
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000", 
+    credentials: true, 
+  })
+);
 app.use(express.json());
+app.use(cookieParser());
 
 // Database connection
 connectDB();
