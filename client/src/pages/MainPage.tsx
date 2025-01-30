@@ -37,7 +37,7 @@ export const ZimanyHome: React.FC = () => {
     const fetchProperties = async () => {
       console.log('hello form the frontend fetch proeprties')
       try {
-        const response = await fetch("/api/properties", {
+        const response = await fetch("http://localhost:5000/api/properties", {
           method: "GET",
           credentials: "include",
         });
