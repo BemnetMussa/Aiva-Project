@@ -14,27 +14,26 @@ const AddPropertyPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const response = await fetch(
-      "http://localhost:5000/api/users/property/add",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title,
-          location,
-          price,
-          bedrooms,
-          bathrooms,
-          squareFeet,
-          description,
-          type,
-          status,
-        }),
-        credentials: "include", // This is required for cookies to work
-      }
-    );
+    console.log('property is being added')
+    const response = await fetch("http://localhost:5000/api/properties/add", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title,
+        location,
+        price,
+        bedrooms,
+        bathrooms,
+        squareFeet,
+        description,
+        type,
+        status,
+      }),
+      credentials: "include", // This is required for cookies to work
+    });
+    console.log("added successfully")
   };
 
   return (

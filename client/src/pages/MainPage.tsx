@@ -6,177 +6,21 @@ import { SearchFormData } from "../components/types";
 import Navbar from "../components/Navbar";
 import { Link } from "react-router-dom";
 import Footer from "../components/Footer";
+import { useState, useEffect } from "react";
 
-const propertyData = [
-  {
-    imageUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/9551b30ffd791b24c187aced272c5c6ff64143110467cc272de2a8ebba209e1b?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    heartIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/e4754955a5525e5dc6d8c2c0e2b3acd745bcd2ad07da3ddc3d9b5325274c9020?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    shareIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/4a408235fb38e98ad478648d8732bda0e0b413b3fad0bd9e972f654e90eb05ca?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    title: "Real Estate",
-    location: "Addis Ababa, Gofa",
-    bedrooms: 3,
-    bathrooms: 2,
-    squareFeet: 95,
-    rating: 5.0,
-    pricePerNight: 149,
-    description:
-      "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolor vero voluptatem, quia odio consectetur sint molestiae assumenda minus rem perspiciatis, sunt quibusdam sequi ad laboriosam illum. Vel, illum quisquam ad unde velit cumque iure consectetur qui praesentium, officia nesciunt perspiciatis? Earum possimus nihil ratione ab molestias deserunt, illo eum odit vero, illum sit nesciunt commodi unde nisi consectetur beatae quisquam. Accusamus, perferendis soluta. Labore necessitatibus velit mollitia quasi, laborum doloremque temporibus maxime molestias esse quis minima voluptates, reiciendis, cupiditate alias obcaecati molestiae nostrum facilis dolores ducimus impedit ipsam neque tempora illum! Cumque explicabo, laudantium nihil voluptatibus sint facilis ea quaerat. ",
-    bedroomIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/aa7dcd1fe32a40832afea7e3d37e922a55e6c5335edfeb813d2e3ac08d3b8b6f?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    bathroomIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/763b3bac35d3f53164d71d0437aff1f8baa1734bda7caadf0933c5559d0d76f9?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    squareFeetIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/951c113e1ae7c2e467b3bc29ff40457cd9c91f331f81af3c4e33f9862d190c84?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    ratingIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/60824f7a6a30c3a5c74328ef290634fec4022ec6dff15d339deede88ce7f7a4b?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-  },
-  {
-    imageUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/9551b30ffd791b24c187aced272c5c6ff64143110467cc272de2a8ebba209e1b?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    heartIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/e4754955a5525e5dc6d8c2c0e2b3acd745bcd2ad07da3ddc3d9b5325274c9020?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    shareIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/4a408235fb38e98ad478648d8732bda0e0b413b3fad0bd9e972f654e90eb05ca?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    title: "G+2 , Real Estate",
-    location: "Addis Ababa, Gofa",
-    bedrooms: 3,
-    bathrooms: 2,
-    squareFeet: 95,
-    rating: 5.0,
-    pricePerNight: 149,
-    description:
-      "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolor vero voluptatem, quia odio consectetur sint molestiae assumenda minus rem perspiciatis, sunt quibusdam sequi ad laboriosam illum. Vel, illum quisquam ad unde velit cumque iure consectetur qui praesentium, officia nesciunt perspiciatis? Earum possimus nihil ratione ab molestias deserunt, illo eum odit vero, illum sit nesciunt commodi unde nisi consectetur beatae quisquam. Accusamus, perferendis soluta. Labore necessitatibus velit mollitia quasi, laborum doloremque temporibus maxime molestias esse quis minima voluptates, reiciendis, cupiditate alias obcaecati molestiae nostrum facilis dolores ducimus impedit ipsam neque tempora illum! Cumque explicabo, laudantium nihil voluptatibus sint facilis ea quaerat. ",
+interface Property {
+  _id: string;
+  title: string;
+  location: string;
+  price: number;
+  bedrooms: number;
+  bathrooms: number;
+  squareFeet: number;
+  description: string;
+  type: string;
+  status: string;
+}
 
-    bedroomIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/aa7dcd1fe32a40832afea7e3d37e922a55e6c5335edfeb813d2e3ac08d3b8b6f?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    bathroomIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/763b3bac35d3f53164d71d0437aff1f8baa1734bda7caadf0933c5559d0d76f9?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    squareFeetIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/951c113e1ae7c2e467b3bc29ff40457cd9c91f331f81af3c4e33f9862d190c84?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    ratingIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/60824f7a6a30c3a5c74328ef290634fec4022ec6dff15d339deede88ce7f7a4b?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-  },
-  {
-    imageUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/9551b30ffd791b24c187aced272c5c6ff64143110467cc272de2a8ebba209e1b?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    heartIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/e4754955a5525e5dc6d8c2c0e2b3acd745bcd2ad07da3ddc3d9b5325274c9020?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    shareIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/4a408235fb38e98ad478648d8732bda0e0b413b3fad0bd9e972f654e90eb05ca?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    title: "G+2 , Real Estate",
-    location: "Addis Ababa, Gofa",
-    bedrooms: 3,
-    bathrooms: 2,
-    squareFeet: 95,
-    rating: 5.0,
-    pricePerNight: 149,
-    bedroomIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/aa7dcd1fe32a40832afea7e3d37e922a55e6c5335edfeb813d2e3ac08d3b8b6f?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    bathroomIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/763b3bac35d3f53164d71d0437aff1f8baa1734bda7caadf0933c5559d0d76f9?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    squareFeetIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/951c113e1ae7c2e467b3bc29ff40457cd9c91f331f81af3c4e33f9862d190c84?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    ratingIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/60824f7a6a30c3a5c74328ef290634fec4022ec6dff15d339deede88ce7f7a4b?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-  },
-  {
-    imageUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/9551b30ffd791b24c187aced272c5c6ff64143110467cc272de2a8ebba209e1b?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    heartIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/e4754955a5525e5dc6d8c2c0e2b3acd745bcd2ad07da3ddc3d9b5325274c9020?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    shareIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/4a408235fb38e98ad478648d8732bda0e0b413b3fad0bd9e972f654e90eb05ca?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    title: "G+2 , Real Estate",
-    location: "Addis Ababa, Gofa",
-    bedrooms: 3,
-    bathrooms: 2,
-    squareFeet: 95,
-    rating: 5.0,
-    pricePerNight: 149,
-    bedroomIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/aa7dcd1fe32a40832afea7e3d37e922a55e6c5335edfeb813d2e3ac08d3b8b6f?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    bathroomIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/763b3bac35d3f53164d71d0437aff1f8baa1734bda7caadf0933c5559d0d76f9?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    squareFeetIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/951c113e1ae7c2e467b3bc29ff40457cd9c91f331f81af3c4e33f9862d190c84?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    ratingIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/60824f7a6a30c3a5c74328ef290634fec4022ec6dff15d339deede88ce7f7a4b?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-  },
-  {
-    imageUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/9551b30ffd791b24c187aced272c5c6ff64143110467cc272de2a8ebba209e1b?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    heartIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/e4754955a5525e5dc6d8c2c0e2b3acd745bcd2ad07da3ddc3d9b5325274c9020?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    shareIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/4a408235fb38e98ad478648d8732bda0e0b413b3fad0bd9e972f654e90eb05ca?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    title: "G+2 , Real Estate",
-    location: "Addis Ababa, Gofa",
-    bedrooms: 3,
-    bathrooms: 2,
-    squareFeet: 95,
-    rating: 5.0,
-    pricePerNight: 149,
-    bedroomIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/aa7dcd1fe32a40832afea7e3d37e922a55e6c5335edfeb813d2e3ac08d3b8b6f?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    bathroomIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/763b3bac35d3f53164d71d0437aff1f8baa1734bda7caadf0933c5559d0d76f9?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    squareFeetIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/951c113e1ae7c2e467b3bc29ff40457cd9c91f331f81af3c4e33f9862d190c84?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    ratingIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/60824f7a6a30c3a5c74328ef290634fec4022ec6dff15d339deede88ce7f7a4b?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-  },
-  {
-    imageUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/9551b30ffd791b24c187aced272c5c6ff64143110467cc272de2a8ebba209e1b?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    heartIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/e4754955a5525e5dc6d8c2c0e2b3acd745bcd2ad07da3ddc3d9b5325274c9020?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    shareIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/4a408235fb38e98ad478648d8732bda0e0b413b3fad0bd9e972f654e90eb05ca?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    title: "G+2 , Real Estate",
-    location: "Addis Ababa, Gofa",
-    bedrooms: 3,
-    bathrooms: 2,
-    squareFeet: 95,
-    rating: 5.0,
-    pricePerNight: 149,
-    bedroomIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/aa7dcd1fe32a40832afea7e3d37e922a55e6c5335edfeb813d2e3ac08d3b8b6f?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    bathroomIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/763b3bac35d3f53164d71d0437aff1f8baa1734bda7caadf0933c5559d0d76f9?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    squareFeetIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/951c113e1ae7c2e467b3bc29ff40457cd9c91f331f81af3c4e33f9862d190c84?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    ratingIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/60824f7a6a30c3a5c74328ef290634fec4022ec6dff15d339deede88ce7f7a4b?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-  },
-  {
-    imageUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/9551b30ffd791b24c187aced272c5c6ff64143110467cc272de2a8ebba209e1b?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    heartIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/e4754955a5525e5dc6d8c2c0e2b3acd745bcd2ad07da3ddc3d9b5325274c9020?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    shareIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/4a408235fb38e98ad478648d8732bda0e0b413b3fad0bd9e972f654e90eb05ca?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    title: "G+2 , Real Estate",
-    location: "Addis Ababa, Gofa",
-    bedrooms: 3,
-    bathrooms: 2,
-    squareFeet: 95,
-    rating: 5.0,
-    pricePerNight: 149,
-    bedroomIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/aa7dcd1fe32a40832afea7e3d37e922a55e6c5335edfeb813d2e3ac08d3b8b6f?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    bathroomIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/763b3bac35d3f53164d71d0437aff1f8baa1734bda7caadf0933c5559d0d76f9?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    squareFeetIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/951c113e1ae7c2e467b3bc29ff40457cd9c91f331f81af3c4e33f9862d190c84?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-    ratingIconUrl:
-      "https://cdn.builder.io/api/v1/image/assets/e680e7b451be4bf7a4bb6dfb186f609f/60824f7a6a30c3a5c74328ef290634fec4022ec6dff15d339deede88ce7f7a4b?apiKey=e680e7b451be4bf7a4bb6dfb186f609f&",
-  },
-
-  // Repeat similar objects for other properties
-];
 
 export const ZimanyHome: React.FC = () => {
   const handleSearch = (data: SearchFormData) => {
@@ -186,6 +30,27 @@ export const ZimanyHome: React.FC = () => {
   const handlePageChange = (page: number) => {
     console.log("Page changed to:", page);
   };
+
+ const [properties, setProperties] = useState<Property[]>([]);
+
+  useEffect(() => {
+    const fetchProperties = async () => {
+      console.log('hello form the frontend fetch proeprties')
+      try {
+        const response = await fetch("/api/properties", {
+          method: "GET",
+          credentials: "include",
+        });
+        console.log(response)
+        const data = await response.json();
+        setProperties(data);
+      } catch (error) {
+        console.error("Error fetching properties:", error);
+      }
+    };
+
+    fetchProperties();
+  }, []);
 
   return (
     <div className="flex overflow-hidden flex-col items-center w-full pt-14 bg-white border border-cyan-400 border-solid shadow-[0px_3px_6px_rgba(18,15,40,0.12)]">
@@ -217,7 +82,7 @@ export const ZimanyHome: React.FC = () => {
 
       <div className="mt-24 w-[80%]">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 ">
-          {propertyData.map((property, index) => (
+          {properties.map((property, index) => (
             <div key={index} className=" ">
               <PropertyCard {...property} />
             </div>
