@@ -10,31 +10,30 @@ const Navbar = () => {
           {/* Logo and Brand */}
           <div className="flex items-start">
             <Link to="/" className="flex items-center space-x-2">
-              <img src="/logo.png" alt="logo" className='w-28 h-14'/>
+              <img src="/logo.png" alt="logo" className="w-28 h-14" />
             </Link>
           </div>
 
           {/* Navigation Links */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link 
-              to="/" 
+            <Link
+              to="/"
               className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium  hover:border-b-4 hover:border-primary transition ease-out duration-500"
             >
               Home
             </Link>
-            <Link 
-              to="/bookings" 
+            <Link
+              to="/favorites"
               className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium  hover:border-b-4 hover:border-primary transition ease-out duration-500"
             >
-              Favourites
+              Favorites
             </Link>
-            <Link 
-              to="/host" 
+            <Link
+              to="/accommodations"
               className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium  hover:border-b-4 hover:border-primary transition ease-out duration-500"
             >
-              Host Accomedations
+              Host Accommodations
             </Link>
-       
           </div>
 
           {/* Right side icons */}
@@ -52,13 +51,7 @@ const Navbar = () => {
         </div>
       </div>
 
-
-
-
-
-
-
-{/* 
+      {/* 
       
       <div className="md:hidden">
         <button className="mobile-menu-button p-4 focus:outline-none">
@@ -68,8 +61,6 @@ const Navbar = () => {
         </button>
       </div>
  */}
-
-
 
       {/* Mobile menu
       <div className="hidden md:hidden">

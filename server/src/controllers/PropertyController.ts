@@ -31,7 +31,7 @@ export const addProperty = async (
     status,
   } = req.body;
 
-  const userId = (req as any).user?.id; // Get the user ID from the request object
+  const userId = (req as any).user?.id; // Get the user ID from the token
 
   try {
     if (!userId) {
@@ -58,3 +58,18 @@ export const addProperty = async (
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
+export const userProperty = async (req: Request, res: Response): Promise<void> => {
+   
+    try {
+        const userId = (req as any).user?.id;
+        console.log(userId)
+        const properties = await Property.find({ userId });
+
+        res.status(200).json(properties);
+    } catch (error) {
+        console.error("Error fetching user properties:", error);
+        res.status(500).json({ message: "Server error" });
+    }
+}
