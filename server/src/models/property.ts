@@ -1,13 +1,3 @@
-// (title = "G+2, Real Estate"),
-//   (location = "Addis Ababa, Goffa"),
-//   (price = 149),
-//   (bedrooms = 3),
-//   (bathrooms = 2),
-//   (squareFeet = 95),
-//   (description = "This is a beautiful house located in the heart of Addis Ababa, Goffa. It has 3 bedrooms, 2 bathrooms, and a total of 95 square feet."),
-//   (type = "Rent"),
-//   (status = "Available");
-
 import mongoose from "mongoose";
 import { useRevalidator } from "react-router-dom";
 

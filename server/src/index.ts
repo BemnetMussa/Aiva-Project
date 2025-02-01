@@ -4,7 +4,9 @@ import cors from "cors";
 import connectDB from "./config/db";
 import userRoutes from "./routes/userRoutes";
 import propertyRoutes from "./routes/propertyRoutes";
+import favoritesRoutes from "./routes/favoritesRoutes"
 import cookieParser from "cookie-parser";
+
 
 
 
@@ -31,6 +33,7 @@ connectDB();
 // Routes
 app.use("/api/users",  userRoutes);
 app.use("/api/properties", propertyRoutes);
+app.use("/api/favorites", favoritesRoutes)
 
 
 

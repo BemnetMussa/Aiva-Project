@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import User from "../models/User";
-import Property from "../models/property";
+import Property from "../models/Property";
 import { generateToken } from "../utils/generateToken";
 import { protect } from "../middleware/authMiddleware";
 

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import Property from "../models/property";
+import Property from "../models/Property";
 
 export const fetchProperties = async (
   req: Request,
@@ -64,7 +64,6 @@ export const userProperty = async (req: Request, res: Response): Promise<void> =
    
     try {
         const userId = (req as any).user?.id;
-        console.log(userId)
         const properties = await Property.find({ userId });
 
         res.status(200).json(properties);
