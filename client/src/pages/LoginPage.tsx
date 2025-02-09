@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { EyeOff } from "lucide-react";
+import GoogleAuth from "../components/GoogleAuth";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -19,49 +22,76 @@ const LoginPage: React.FC = () => {
       credentials: "include", // This is required for cookies to work
     });
 
-      if (response.ok) {
-        alert("Login successful!");
-      } else {
-        alert("Login failed!");
-      }
+    if (response.ok) {
+      alert("Login successful!");
+    }
+    alert("Login failed!");
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-lvh">
-      <div className="flex flex-col items-center gap-4 p-4 bg-white rounded-xl shadow-lg">
-        <h2>Login</h2>
-        <form
-          className="flex flex-col items-start gap-2 justify-center h-full "
-          onSubmit={handleSubmit}
-        >
-          <div>
-            <label>Email:</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="rounded-xl border border-gray-300 ml-4"
-            />
+    <div className="flex items-center justify-center h-lvh py-6 bg-gray-50">
+      <div className="flex justify-center px-4 py-10 bg-white rounded-xl shadow-lg w-5/12 ">
+        <div className="flex flex-col justify-center items-centers w-3/4 gap-8">
+          <div className="flex flex-col justify-center items-center">
+            <h2 className="text-2xl">Log in</h2>
+            <p className="text-sm">
+              Don’t have an acount?
+              <Link to="/signup" className="pl-1">
+                Signup
+              </Link>
+            </p>
           </div>
-          <div>
-            <label>Password:</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="rounded-xl border border-gray-300 ml-4"
-            />
+          {/* google or facebook auth  */}
+
+          <GoogleAuth />
+
+          {/* giving options */}
+          <div className="flex justify-center items-center space-x-2 mt-5 w-full text-sm">
+            <hr className="w-3/12 h-2 border-gray-500 mt-2" />
+            <p>Or continue with email</p>
+            <hr className="w-3/12 h-2 border-gray-500 mt-2" />
           </div>
 
-          <button
-            className="bg-primary px-12 py-3 rounded-xl w-full mt-7 justify-center text-white"
-            type="submit"
+          {/* email form */}
+
+          <form
+            className="flex flex-col items-start gap-4 justify-center h-full mt-4 w-full text-sm"
+            onSubmit={handleSubmit}
           >
-            Login
-          </button>
-        </form>
+            <div className="flex flex-col w-full space-y-1">
+              <label className="">Email adress or username</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="rounded-xl border border-gray-300 w-full h-9"
+              />
+            </div>
+            <div className="flex flex-col w-full space-y-1">
+              <span className="flex justify-between">
+                <label className="">Password</label>
+                <span className="flex justify-center items-center gap-1 ">
+                  <EyeOff size={16} /> Hide
+                </span>
+              </span>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="rounded-xl border border-gray-300 w-full h-9"
+              />
+            </div>
+
+            <button
+              className="bg-primary px-12 py-3 rounded-xl w-full mt-5 justify-center text-white"
+              type="submit"
+            >
+              Login
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );

@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import User from "../models/User";
-import Property from "../models/Property";
+// import Property from "../models/property";
 import { generateToken } from "../utils/generateToken";
-import { protect } from "../middleware/authMiddleware";
+// import { protect } from "../middleware/authMiddleware";
 
 export const signup = async (req: Request, res: Response): Promise<void> => {
-  const { name, email, password } = req.body;
+  const { name, email, password, gender, dob, agree } = req.body;
 
   try {
     const userExists = await User.findOne({ email });
@@ -14,7 +14,14 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const user = await User.create({ name, email, password });
+    const user = await User.create({
+      name,
+      email,
+      password,
+      gender,
+      dob,
+      agree,
+    });
 
     res.status(201).json({ message: "User created successfully" });
   } catch (error) {
@@ -53,5 +60,25 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const google = async (req: Request, res: Response): Promise<void> => {
+  const { name, email } = req.body;
+
+  try {
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+      res.status(400).json({ message: "User already exists" });
+      return;
+    }
+
+    const user = await User.create({ name, email });
+    const userData = user.toObject();
+    const { password: pass, ...rest } = userData;
+
+    res.status(201).json({ message: "User created successfully", rest });
+  } catch (error) {
+    res.status(500).json({ message: "Servererror" });
   }
 };

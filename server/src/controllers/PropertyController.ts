@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
-import Property from "../models/Property";
+import Property from "../models/property";
 
 export const fetchProperties = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    console.log("fetching property started")
+    console.log("fetching property started");
     const properties = await Property.find();
     res.status(200).json(properties);
   } catch (error) {
@@ -59,16 +59,17 @@ export const addProperty = async (
   }
 };
 
+export const userProperty = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const userId = (req as any).user?.id;
+    const properties = await Property.find({ userId });
 
-export const userProperty = async (req: Request, res: Response): Promise<void> => {
-   
-    try {
-        const userId = (req as any).user?.id;
-        const properties = await Property.find({ userId });
-
-        res.status(200).json(properties);
-    } catch (error) {
-        console.error("Error fetching user properties:", error);
-        res.status(500).json({ message: "Server error" });
-    }
-}
+    res.status(200).json(properties);
+  } catch (error) {
+    console.error("Error fetching user properties:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};

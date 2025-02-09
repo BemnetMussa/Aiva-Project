@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { useRevalidator } from "react-router-dom";
 
 const propertySchema = new mongoose.Schema({
   userId: {

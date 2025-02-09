@@ -51,7 +51,9 @@ export const ZimanyHome: React.FC = () => {
     fetchProperties();
   }, []);
 
-  const handleFavoritesClick: (propertyId: string) => Promise<void> = async (propertyId) => {
+  const handleFavoritesClick: (propertyId: string) => Promise<void> = async (
+    propertyId
+  ) => {
     try {
       const response = await fetch("http://localhost:5000/api/favorites/add", {
         method: "POST",
