@@ -1,9 +1,5 @@
 /* src/tailwind.css */
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
-
-
+@import "tailwindcss";
 
 :root {
   --primary-color: #38BDF8;

@@ -21,7 +21,6 @@ interface Property {
   status: string;
 }
 
-
 export const ZimanyHome: React.FC = () => {
   const handleSearch = (data: SearchFormData) => {
     console.log("Search data:", data);
@@ -31,17 +30,17 @@ export const ZimanyHome: React.FC = () => {
     console.log("Page changed to:", page);
   };
 
- const [properties, setProperties] = useState<Property[]>([]);
+  const [properties, setProperties] = useState<Property[]>([]);
 
   useEffect(() => {
     const fetchProperties = async () => {
-      console.log('hello form the frontend fetch proeprties')
+      console.log("hello form the frontend fetch proeprties");
       try {
         const response = await fetch("http://localhost:5000/api/properties", {
           method: "GET",
           credentials: "include",
         });
-        console.log(response)
+        console.log(response);
         const data = await response.json();
         setProperties(data);
       } catch (error) {
@@ -51,6 +50,27 @@ export const ZimanyHome: React.FC = () => {
 
     fetchProperties();
   }, []);
+
+  const handleFavoritesClick: (propertyId: string) => Promise<void> = async (propertyId) => {
+    try {
+      const response = await fetch("http://localhost:5000/api/favorites/add", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ propertyId }), // Send the property ID to the backend
+      });
+
+      if (response.ok) {
+        console.log("Property added to favorites successfully!");
+      } else {
+        console.error("Failed to add property to favorites.");
+      }
+    } catch (error) {
+      console.error("Error adding property to favorites:", error);
+    }
+  };
 
   return (
     <div className="flex overflow-hidden flex-col items-center w-full pt-14 bg-white border border-cyan-400 border-solid shadow-[0px_3px_6px_rgba(18,15,40,0.12)]">
@@ -83,9 +103,11 @@ export const ZimanyHome: React.FC = () => {
       <div className="mt-24 w-[80%]">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 ">
           {properties.map((property, index) => (
-            <div key={index} className=" ">
-              <PropertyCard {...property} />
-            </div>
+            <PropertyCard
+              key={property._id}
+              {...property}
+              onFavoritesClick={() => handleFavoritesClick(property._id)}
+            />
           ))}
         </div>
       </div>
