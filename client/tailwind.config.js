@@ -6,20 +6,22 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'primary': '#38BDF8',
-        'secondary': '#64748B',
+        primary: 'var(--primary)',
+        secondary: 'var(--secondary)',
       },
       spacing: {
-        '128': '32rem',
-        '144': '36rem',
+        128: "32rem",
+        144: "36rem",
       },
       borderRadius: {
-        '4xl': '2rem',
+        "4xl": "2rem",
       },
     },
   },
   plugins: [
-    require('@tailwindcss/forms'),
-    require('@tailwindcss/aspect-ratio'),
+    require("@tailwindcss/forms"),
+    require("@tailwindcss/aspect-ratio"),
   ],
 };
+
+

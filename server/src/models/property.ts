@@ -14,6 +14,7 @@ const propertySchema = new mongoose.Schema({
     trim: true,
   },
 
+
   location: {
     type: String,
     required: true,
@@ -50,10 +51,19 @@ const propertySchema = new mongoose.Schema({
     required: true,
   },
 
+  phoneNumber: {
+    type: Number,
+    required: true,
+  },
+
   status: {
     type: String,
     required: true,
   },
+  image: {
+    type: String,
+    required: true,
+  }
 });
 
 const Property = mongoose.model("Property", propertySchema);

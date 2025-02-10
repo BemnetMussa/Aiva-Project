@@ -19,11 +19,11 @@ const LoginPage: React.FC = () => {
       credentials: "include", // This is required for cookies to work
     });
 
-      if (response.ok) {
-        alert("Login successful!");
-      } else {
-        alert("Login failed!");
-      }
+    if (response.ok) {
+      alert("Login successful!");
+    } else {
+      alert("Login failed!");
+    }
   };
 
   return (
@@ -56,7 +56,7 @@ const LoginPage: React.FC = () => {
           </div>
 
           <button
-            className="bg-primary px-12 py-3 rounded-xl w-full mt-7 justify-center text-white"
+            className="bg-primary-color px-12 py-3 rounded-xl w-full mt-7 justify-center text-white"
             type="submit"
           >
             Login

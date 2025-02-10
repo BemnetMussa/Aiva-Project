@@ -1,5 +1,6 @@
 import React from 'react';
 import { Heart, Bed, Bath, Square } from 'lucide-react';
+import { image } from 'image-downloader';
 
 interface PropertyCardProps {
   _id: string; // Add the property ID
@@ -12,6 +13,7 @@ interface PropertyCardProps {
   description?: string;
   type?: string;
   status?: string;
+  image?: string;
   onFavoritesClick?: (id: string) => void; // Add this prop
 }
 
@@ -27,6 +29,7 @@ const PropertyCard = ({
   description = "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Sapiente quo odit et porro aut voluptatem saepe suscipit accusamus voluptas quam!",
   type = "Rent",
   status = "Available",
+  image="",
   onFavoritesClick, // Destructure the prop
 }: PropertyCardProps) => {
   
@@ -40,23 +43,8 @@ const PropertyCard = ({
     <div className="w-[401px] h-[599px] rounded-lg bg-white shadow-sm">
       {/* Image Container */}
       <div className="relative p-2">
-        <div className="h-[329px] w-full bg-gray-200 p-32 flex items-center justify-center">
-          {/* Placeholder image representation */}
-          <div className="text-gray-400">
-            <svg
-              className="w-12 h-12"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-              />
-            </svg>
-          </div>
+        <div className="h-[329px] w-full bg-gray-200 flex items-center justify-center">
+          <img src={image} className="w-full h-full object-cover block" />
         </div>
 
         {/* Favorite Button */}
@@ -137,8 +125,10 @@ const PropertyCard = ({
 
         {/* buttons */}
         <div className="flex justify-center text-white font-semibold pt-3 gap-3">
-          <button className="px-14 py-3 bg-primary rounded-lg">Message</button>
-          <button className="px-9 py-3 bg-primary rounded-lg">
+          <button className="px-14 py-3 bg-primary-color rounded-lg ">
+            Message
+          </button>
+          <button className="px-9 py-3 bg-primary-color rounded-lg">
             Show number
           </button>
         </div>

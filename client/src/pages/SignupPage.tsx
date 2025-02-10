@@ -12,8 +12,7 @@ const SignupPage: React.FC = () => {
       alert("Passwords do not match");
       return;
     }
-    
-  
+
     const response = await fetch("http://localhost:5000/api/users/signup", {
       method: "POST",
       headers: {
@@ -31,7 +30,6 @@ const SignupPage: React.FC = () => {
     } else {
       alert("Signup failed!");
     }
-
   };
 
   return (
@@ -84,7 +82,7 @@ const SignupPage: React.FC = () => {
             />
           </div>
           <button
-            className="bg-primary px-12 py-3 rounded-xl w-full mt-7 justify-center text-white"
+            className="bg-primary-colorpx-12 py-3 rounded-xl w-full mt-7 justify-center text-white"
             type="submit"
           >
             Sign Up
