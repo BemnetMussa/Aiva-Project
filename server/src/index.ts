@@ -7,14 +7,23 @@ import propertyRoutes from "./routes/propertyRoutes";
 import favoritesRoutes from "./routes/favoritesRoutes";
 import cookieParser from "cookie-parser";
 
+import multer from "multer";
+
+dotenv.config();
+
+
+console.log(" this is the REgion", process.env.BUCKET_REGION);
+
 // Create Express app
 const app = express();
 
 // Middleware
 app.use(
   cors({
-    origin: "http://localhost:5173",
-    credentials: true,
+
+    origin: "http://localhost:5173", 
+    credentials: true, 
+
   })
 );
 app.use(express.json());
@@ -23,10 +32,19 @@ app.use(cookieParser());
 // Database connection
 connectDB();
 
+
+const storage = multer.memoryStorage();
+const upload = multer({storage: storage})
+
+
+
 // Routes
-app.use("/api/users", userRoutes);
-app.use("/api/properties", propertyRoutes);
-app.use("/api/favorites", favoritesRoutes);
+app.use("/api/users",  userRoutes);
+app.use("/api/properties", upload.single("image"), propertyRoutes);
+app.use("/api/favorites", favoritesRoutes)
+
+
+
 
 app.get("/", (req: Request, res: Response) => {
   res.send("API is running...");

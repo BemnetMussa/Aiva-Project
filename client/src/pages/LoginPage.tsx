@@ -24,8 +24,10 @@ const LoginPage: React.FC = () => {
 
     if (response.ok) {
       alert("Login successful!");
+
+    } else {
+      alert("Login failed!");
     }
-    alert("Login failed!");
   };
 
   return (
@@ -52,11 +54,13 @@ const LoginPage: React.FC = () => {
             <hr className="w-3/12 h-2 border-gray-500 mt-2" />
           </div>
 
+
           {/* email form */}
 
           <form
             className="flex flex-col items-start gap-4 justify-center h-full mt-4 w-full text-sm"
             onSubmit={handleSubmit}
+
           >
             <div className="flex flex-col w-full space-y-1">
               <label className="">Email adress or username</label>

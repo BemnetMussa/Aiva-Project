@@ -14,6 +14,7 @@ const SignupPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+
     const response = await fetch("http://localhost:5000/api/users/signup", {
       method: "POST",
       headers: {
@@ -57,6 +58,7 @@ const SignupPage: React.FC = () => {
             <p>Or</p>
             <hr className="w-6/12 h-2 border-gray-500 mt-2" />
           </div>
+
           <h1 className="mt-4 font-semibold">Signup with your email address</h1>
 
           {/* email form */}
@@ -64,6 +66,7 @@ const SignupPage: React.FC = () => {
           <form
             className="flex flex-col items-start gap-4 justify-center h-full mt-4 w-full text-sm"
             onSubmit={handleSubmit}
+
           >
             <div className="flex flex-col w-full space-y-1">
               <label className="text-gray-800">Username</label>

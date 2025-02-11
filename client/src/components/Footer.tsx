@@ -75,7 +75,7 @@ const Footer = () => {
                 placeholder="Enter your email"
                 className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
               />
-              <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+              <button className="px-4 py-2 bg-primary-color text-white rounded-md hover:bg-blue-600">
                 Subscribe
               </button>
             </div>
@@ -130,11 +130,13 @@ const Footer = () => {
             © 2024 Brand, Inc. -
             <a href="#" className="text-gray-600 hover:text-gray-900 ml-1">
               Privacy
+
             </a>
             -
             <a href="#" className="text-gray-600 hover:text-gray-900 ml-1">
               Terms
             </a>
+
             -
             <a href="#" className="text-gray-600 hover:text-gray-900 ml-1">
               Sitemap
