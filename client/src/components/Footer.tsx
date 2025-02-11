@@ -130,11 +130,13 @@ const Footer = () => {
             © 2024 Brand, Inc. -
             <a href="#" className="text-gray-600 hover:text-gray-900 ml-1">
               Privacy
-            </a>{" "}
+
+            </a>
             -
             <a href="#" className="text-gray-600 hover:text-gray-900 ml-1">
               Terms
-            </a>{" "}
+            </a>
+
             -
             <a href="#" className="text-gray-600 hover:text-gray-900 ml-1">
               Sitemap

@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+
 import Property from "../models/Property";
 import { S3Client, PutObjectCommand, GetObjectCommand, S3LocationFilterSensitiveLog } from "@aws-sdk/client-s3";
 // import sharp from "sharp";
@@ -28,11 +29,13 @@ const s3 = new S3Client({
 const randomImageName = (bytes=32) => crypto.randomBytes(bytes).toString('hex')
 
 
+
 export const fetchProperties = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
+
     const properties = await Property.find({}); // Get all properties from the database
 
     for (const property of properties) {
@@ -49,6 +52,7 @@ export const fetchProperties = async (
     console.log(properties);
 
     console.log("fetching property started");
+
     res.status(200).json(properties);
   } catch (error) {
     console.error("Error fetching properties:", error);
@@ -128,16 +132,17 @@ export const addProperty = async (
   }
 };
 
+export const userProperty = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const userId = (req as any).user?.id;
+    const properties = await Property.find({ userId });
 
-export const userProperty = async (req: Request, res: Response): Promise<void> => {
-   
-    try {
-        const userId = (req as any).user?.id;
-        const properties = await Property.find({ userId });
-
-        res.status(200).json(properties);
-    } catch (error) {
-        console.error("Error fetching user properties:", error);
-        res.status(500).json({ message: "Server error" });
-    }
-}
+    res.status(200).json(properties);
+  } catch (error) {
+    console.error("Error fetching user properties:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
