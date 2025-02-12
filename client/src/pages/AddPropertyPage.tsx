@@ -68,7 +68,7 @@ const AddPropertyPage: React.FC = () => {
     <>
       <Navbar />
       <div className="flex justify-center items-center w-full mt-20">
-        <div className=" w-8/12 bg-white rounded-xl shadow-xl my-6">
+        <div className="w-full sm:mx-10 xl:mx-0 xl:w-8/12 bg-white rounded-xl shadow-xl my-6">
           <div className="flex flex-col items-center gap-10 px-4 py-6 w-full ">
             <h1 className="text-4xl font-semibold tracking-tighter text-cyan-500">
               Host Your Property
@@ -77,8 +77,8 @@ const AddPropertyPage: React.FC = () => {
               onSubmit={handleSubmit}
               className="flex flex-col gap-2 items-center justify-center h-full w-full "
             >
-              <div className="grid grid-cols-3 gap-5 px-5 w-full">
-                <label className="flex flex-col gap-3 font-semibold text-md tracking-wider">
+              <div className="grid md:grid-cols-3  gap-5 px-5 w-full ">
+                <label className="flex flex-col gap-3 font-semibold text-xl sm:text-lg md:text-md tracking-wider">
                   <h2>
                     Property Name <span className="text-red-700">*</span>
                   </h2>
@@ -90,7 +90,7 @@ const AddPropertyPage: React.FC = () => {
                     className="rounded-sm border border-gray-300 p-2 w-full bg-gray-50 text-[0.8rem] font-normal tracking-wider"
                   />
                 </label>
-                <label className="flex flex-col gap-3 font-semibold text-md tracking-wider">
+                <label className="flex flex-col gap-3 font-semibold text-xl sm:text-lg md:text-md tracking-wider">
                   <h2>
                     Address <span className="text-red-700">*</span>
                   </h2>
@@ -102,7 +102,7 @@ const AddPropertyPage: React.FC = () => {
                     className="rounded-sm border border-gray-300 p-2 w-full bg-gray-50 text-[0.8rem] font-normal tracking-wider"
                   />
                 </label>
-                <label className="flex flex-col gap-3 font-semibold text-md tracking-wider">
+                <label className="flex flex-col gap-3 font-semibold text-xl sm:text-lg md:text-md tracking-wider">
                   <h2>
                     City <span className="text-red-700">*</span>
                   </h2>
@@ -114,7 +114,7 @@ const AddPropertyPage: React.FC = () => {
                     className="rounded-sm border border-gray-300 p-2 w-full bg-gray-50 text-[0.8rem] font-normal tracking-wider"
                   />
                 </label>
-                <label className="flex flex-col gap-3 font-semibold text-md tracking-wider">
+                <label className="flex flex-col gap-3 font-semibold text-xl sm:text-lg md:text-md tracking-wider">
                   Price
                   <input
                     type="text"
@@ -124,7 +124,7 @@ const AddPropertyPage: React.FC = () => {
                     className="rounded-sm border border-gray-300 p-2 w-full bg-gray-50 text-[0.8rem] font-normal tracking-wider"
                   />
                 </label>
-                <label className="flex flex-col gap-3 font-semibold text-md tracking-wider">
+                <label className="flex flex-col gap-3 font-semibold text-xl sm:text-lg md:text-md tracking-wider">
                   Bedrooms
                   <input
                     type="text"
@@ -134,7 +134,7 @@ const AddPropertyPage: React.FC = () => {
                     className="rounded-sm border border-gray-300 p-2 w-full bg-gray-50 text-[0.8rem] font-normal  tracking-wider"
                   />
                 </label>
-                <label className="flex flex-col gap-3 font-semibold text-md tracking-wider">
+                <label className="flex flex-col gap-3 font-semibold text-xl sm:text-lg md:text-md tracking-wider">
                   Bathrooms
                   <input
                     type="text"
@@ -144,7 +144,7 @@ const AddPropertyPage: React.FC = () => {
                     className="rounded-sm border border-gray-300 p-2 w-full bg-gray-50 text-[0.8rem] font-normal tracking-wider"
                   />
                 </label>
-                <label className="flex flex-col gap-3 font-semibold text-md tracking-wider">
+                <label className="flex flex-col gap-3 font-semibold text-xl sm:text-lg md:text-md tracking-wider">
                   Square Feet
                   <input
                     type="text"
@@ -154,7 +154,7 @@ const AddPropertyPage: React.FC = () => {
                     className="rounded-sm border border-gray-300 p-2 w-full bg-gray-50 text-[0.8rem] font-normal tracking-wider"
                   />
                 </label>
-                <label className="flex flex-col gap-3 font-semibold text-md tracking-wider">
+                <label className="flex flex-col gap-3 font-semibold text-xl sm:text-lg md:text-md tracking-wider">
                   <h2>
                     Type <span className="text-red-700">*</span>
                   </h2>
@@ -166,7 +166,7 @@ const AddPropertyPage: React.FC = () => {
                     className="rounded-sm border border-gray-300 p-2 w-full bg-gray-50 text-[0.8rem] font-normal tracking-wider"
                   />
                 </label>
-                <label className="flex flex-col gap-3 font-semibold text-md tracking-wider">
+                <label className="flex flex-col gap-3 font-semibold text-xl sm:text-lg md:text-md tracking-wider">
                   Status
                   <input
                     type="text"
@@ -176,7 +176,7 @@ const AddPropertyPage: React.FC = () => {
                     className="rounded-sm border border-gray-300 p-2 w-full bg-gray-50 text-[0.8rem] font-normal tracking-wider"
                   />
                 </label>
-                <label className="flex flex-col gap-3 font-semibold text-md tracking-wider">
+                <label className="flex flex-col gap-3 font-semibold text-xl sm:text-lg md:text-md tracking-wider">
                   <h2>
                     Phone Number <span className="text-red-700">*</span>
                   </h2>
@@ -193,7 +193,7 @@ const AddPropertyPage: React.FC = () => {
               <div className="flex flex-col space-y-4 w-full p-6">
                 <label
                   htmlFor="description"
-                  className="font-semibold text-md tracking-wider"
+                  className="font-semibold text-xl sm:text-lg md:text-md tracking-wider"
                 >
                   Property Description
                 </label>
