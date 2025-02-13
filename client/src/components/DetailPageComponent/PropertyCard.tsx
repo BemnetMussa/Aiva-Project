@@ -1,6 +1,6 @@
 const PropertyCard = () => {
   return (
-    <div className="bg-white flex flex-col gap-5 px-5 py-4 mt-6 rounded-lg h-full shadow-2xl drop-shadow-xl w-4/12">
+    <div className="bg-white hidden  lg:flex flex-col gap-5 px-5 py-4 mt-6 rounded-lg h-full shadow-2xl drop-shadow-xl w-4/12">
       {/* name */}
       <div className="flex gap-4">
         <img
