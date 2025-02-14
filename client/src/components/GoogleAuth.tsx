@@ -1,8 +1,11 @@
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { app } from "../firebase";
+import { useDispatch } from "react-redux";
+import { loginFailed, loginSuccess } from "../redux/Slice/authSlice";
 
 // google auth
 const GoogleAuth = () => {
+  const dispatch = useDispatch();
   const auth = getAuth(app);
 
   const handleGoogleAuth = async (e: React.FormEvent) => {
@@ -11,7 +14,7 @@ const GoogleAuth = () => {
     provider.setCustomParameters({ prompt: "select_account" });
 
     const responseFromGoogle = await signInWithPopup(auth, provider);
-    const res = await fetch("http://localhost:5000/api/users/google", {
+    const response = await fetch("http://localhost:5000/api/users/google", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -23,10 +26,12 @@ const GoogleAuth = () => {
       credentials: "include",
     });
 
-    if (res.ok) {
-      alert("Login successful!");
+    const data = await response.json();
+
+    if (response) {
+      dispatch(loginSuccess({ user: data.user, token: data.token }));
     }
-    alert("login failed");
+    dispatch(loginFailed({ error: data.error }));
   };
 
   return (

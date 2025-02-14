@@ -1,8 +1,14 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Bell, User, MessageCircle } from 'lucide-react';
+import React from "react";
+import { Link } from "react-router-dom";
+import { Bell, User, MessageCircle } from "lucide-react";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
 
 const Navbar = () => {
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.auth.isAuthenticated
+  );
+
   return (
     <nav className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 z-50">
       <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
@@ -37,17 +43,32 @@ const Navbar = () => {
           </div>
 
           {/* Right side icons */}
-          <div className="flex items-end space-x-4">
-            <button className="p-2 text-gray-600 hover:text-gray-900 rounded-full hover:bg-gray-100">
-              <MessageCircle className="w-5 h-5" />
-            </button>
-            <button className="p-2 text-gray-600 hover:text-gray-900 rounded-full hover:bg-gray-100">
-              <Bell className="w-5 h-5" />
-            </button>
-            <button className="p-2 text-gray-600 hover:text-gray-900 rounded-full hover:bg-gray-100">
-              <User className="w-5 h-5" />
-            </button>
-          </div>
+          {isAuthenticated ? (
+            <div className="flex items-end space-x-4">
+              <button className="p-2 text-gray-600 hover:text-gray-900 rounded-full hover:bg-gray-100">
+                <MessageCircle className="w-5 h-5" />
+              </button>
+              <button className="p-2 text-gray-600 hover:text-gray-900 rounded-full hover:bg-gray-100">
+                <Bell className="w-5 h-5" />
+              </button>
+              <button className="p-2 text-gray-600 hover:text-gray-900 rounded-full hover:bg-gray-100">
+                <User className="w-5 h-5" />
+              </button>
+            </div>
+          ) : (
+            <div className="flex gap-4">
+              <Link to="/login">
+                <button className="border cursor-pointer border-cyan-200 px-4 py-2 font-medium rounded-full text-white bg-cyan-500 hover:bg-cyan-600">
+                  login
+                </button>
+              </Link>
+              <Link to="/signup">
+                <button className="border cursor-pointer border-cyan-500 px-4 py-2 font-medium rounded-full hover:text-white hover:bg-cyan-500">
+                  sign-up
+                </button>
+              </Link>
+            </div>
+          )}
         </div>
       </div>
 
