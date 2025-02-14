@@ -51,7 +51,7 @@ export const fetchProperties = async (
         { expiresIn: 60 } // 60 seconds
       );
     }
-    console.log(properties);
+    // console.log(properties);
 
     console.log("fetching property started");
 

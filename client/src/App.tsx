@@ -1,4 +1,3 @@
-import * as React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ZimanyHome } from "./pages/MainPage";
 import { HostAccommodation } from "./pages/HostAccomodationPage";
@@ -15,8 +14,9 @@ const App = () => {
         <Route path="/" element={<ZimanyHome />} />
         {/* Add other routes as needed */}
         <Route path="/accommodations" element={<HostAccommodation />} />
-        <Route path="/earnings" element={<div>Earnings Page</div>} />
-        <Route path="/favorites" element={<div>Favorites Page</div>} />
+        {/*1 */}
+        <Route path="/earnings" element={<div>Earnings Page</div>} /> {/*2 */}
+        <Route path="/favorites" element={<div>Favorites Page</div>} /> {/*3 */}
         <Route path="/chat" element={<ChatPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/login" element={<LoginPage />} />

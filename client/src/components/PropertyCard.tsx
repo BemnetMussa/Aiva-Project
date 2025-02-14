@@ -1,6 +1,6 @@
-import React from 'react';
-import { Heart, Bed, Bath, Square } from 'lucide-react';
-import { image } from 'image-downloader';
+import React from "react";
+import { Heart, Bed, Bath, Square } from "lucide-react";
+// import { image } from 'image-downloader';
 
 interface PropertyCardProps {
   _id: string; // Add the property ID
@@ -17,22 +17,20 @@ interface PropertyCardProps {
   onFavoritesClick?: (id: string) => void; // Add this prop
 }
 
-
 const PropertyCard = ({
   _id,
-  title = "G+2, Real Estate",
-  location = "Addis Ababa, Goffa",
-  price = 149,
-  bedrooms = 3,
-  bathrooms = 2,
-  squareFeet = 95,
-  description = "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Sapiente quo odit et porro aut voluptatem saepe suscipit accusamus voluptas quam!",
-  type = "Rent",
-  status = "Available",
-  image="",
+  title,
+  location,
+  price,
+  bedrooms,
+  bathrooms,
+  squareFeet,
+  description,
+  type,
+  status,
+  image,
   onFavoritesClick, // Destructure the prop
 }: PropertyCardProps) => {
-  
   const handleFavorites = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault(); // Prevent default behavior
     if (onFavoritesClick) {
