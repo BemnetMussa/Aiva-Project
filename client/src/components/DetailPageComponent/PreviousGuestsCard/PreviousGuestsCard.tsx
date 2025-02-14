@@ -2,7 +2,7 @@ import { Star } from "lucide-react";
 
 export default function PreviousGuestsCard() {
   return (
-    <div className="w-6/12 shadow-lg py-2 px-3">
+    <div className=" shadow-lg py-2 px-3">
       <div className="flex flex-col gap-7">
         {/*title  */}
         <div className="flex justify-between items-start pr-10">

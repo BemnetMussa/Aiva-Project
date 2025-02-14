@@ -73,7 +73,7 @@ const Image: React.FC = () => {
       </div>
 
       {/* Image Slider for Small Screens */}
-      <div className="relative w-full h-full mx-auto overflow-hidden rounded-xl lg:hidden">
+      <div className="relative w-full h-full mx-auto  overflow-hidden rounded-sm lg:hidden">
         <div
           className="flex h-full transition-transform duration-700 ease-in-out"
           style={{ transform: `translateX(-${currentIndex * 100}%)` }}
@@ -92,13 +92,13 @@ const Image: React.FC = () => {
         {/* Nav Buttons */}
         <button
           onClick={prevSlide}
-          className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full"
+          className="absolute left-2 top-1/2 transform -translate-y-1/2 text-white p-2 rounded-full"
         >
           <ChevronLeft size={24} />
         </button>
         <button
           onClick={nextSlide}
-          className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full"
+          className="absolute right-2 top-1/2 transform -translate-y-1/2 text-white p-2 rounded-full"
         >
           <ChevronRight size={24} />
         </button>
@@ -110,7 +110,7 @@ const Image: React.FC = () => {
               key={index}
               onClick={() => setCurrentIndex(index)}
               className={`w-3 h-3 rounded-full ${
-                currentIndex === index ? "bg-white" : "bg-gray-500"
+                currentIndex === index ? "bg-gray-300" : "bg-gray-600"
               }`}
             ></button>
           ))}

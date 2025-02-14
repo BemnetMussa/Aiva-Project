@@ -63,10 +63,10 @@ const PropertyCard = () => {
       {/* buttons */}
 
       <div className="flex flex-col gap-3 h-full">
-        <button className="text-white bg-blue-500 py-3 text-sm rounded-xl ">
+        <button className="text-white bg-cyan-500 py-3 text-sm rounded-xl font-medium ">
           Show Phone Number
         </button>
-        <button className="text-white bg-blue-500 py-3 text-sm rounded-xl ">
+        <button className="text-white bg-cyan-500 py-3 text-sm rounded-xl  font-medium ">
           Message
         </button>
       </div>
