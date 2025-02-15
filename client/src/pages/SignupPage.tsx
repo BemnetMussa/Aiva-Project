@@ -138,7 +138,7 @@ const SignupPage: React.FC = () => {
               </span>
             </div>
 
-            {/* birth date */}
+            birth date
             <div className="flex flex-col gap-3 mt-6">
               <p className="font-semibold ">What's your date of birth ?</p>
               <input

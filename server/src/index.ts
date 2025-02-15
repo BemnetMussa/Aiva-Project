@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import "dotenv/config";
+import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./config/db";
 import userRoutes from "./routes/userRoutes";
@@ -31,10 +31,6 @@ const upload = multer({ storage: storage });
 app.use("/api/users", userRoutes);
 app.use("/api/properties", upload.single("image"), propertyRoutes);
 app.use("/api/favorites", favoritesRoutes);
-
-app.get("/", (req: Request, res: Response) => {
-  res.send("API is running...");
-});
 
 // Start server
 const PORT = process.env.PORT || 5000;

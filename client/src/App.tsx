@@ -15,6 +15,7 @@ const App = () => {
         <Route path="/" element={<ZimanyHome />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/login" element={<LoginPage />} />
+
         {/* protected  route */}
         <Route element={<ProtectedRoute />}>
           {/* Add other routes as needed */}
@@ -22,7 +23,7 @@ const App = () => {
           <Route path="/earnings" element={<div>Earnings Page</div>} />
           <Route path="/favorites" element={<div>Favorites Page</div>} />
           <Route path="/chat" element={<ChatPage />} />
-          <Route path="/add-property" element={<AddPropertyPage />} />
+          <Route path="/addproperty" element={<AddPropertyPage />} />
           <Route path="/property-detail" element={<DetailPropertyPage />} />
         </Route>
       </Routes>

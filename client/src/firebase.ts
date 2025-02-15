@@ -6,7 +6,7 @@ import { initializeApp } from "firebase/app";
 // Your web app's Firebase configuration
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_API_URL,
+  apiKey: "AIzaSyBeCsHpL9FZZLiJfVMhDO4npNws6xYdVpM",
   authDomain: "aiva-booking-app.firebaseapp.com",
   projectId: "aiva-booking-app",
   storageBucket: "aiva-booking-app.firebasestorage.app",

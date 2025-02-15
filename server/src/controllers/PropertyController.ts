@@ -51,9 +51,10 @@ export const fetchProperties = async (
         { expiresIn: 60 } // 60 seconds
       );
     }
+
     // console.log(properties);
 
-    console.log("fetching property started");
+
 
     res.status(200).json(properties);
   } catch (error) {
@@ -86,6 +87,7 @@ export const addProperty = async (
   } catch (error) {
     console.error("Error uploading file:", error);
   }
+
 
   const {
     title,
@@ -123,9 +125,7 @@ export const addProperty = async (
       image: imageName,
     });
 
-    console.log({ message: "Property added successfully", property });
   } catch (error) {
-    console.error("Error adding property:", error); // Debugging: Log the error
     res.status(500).json({ message: "Server error" });
   }
 };

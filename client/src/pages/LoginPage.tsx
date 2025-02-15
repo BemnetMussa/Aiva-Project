@@ -22,7 +22,6 @@ const LoginPage: React.FC = () => {
         email,
         password,
       }),
-      credentials: "include", // This is required for cookies to work
     });
 
     const data = await response.json();
