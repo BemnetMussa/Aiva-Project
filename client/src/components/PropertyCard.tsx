@@ -1,6 +1,9 @@
 import React from "react";
 import { Heart, Bed, Bath, Square } from "lucide-react";
 
+// import { image } from 'image-downloader';
+
+
 interface PropertyCardProps {
   _id: string;
   title?: string;
@@ -19,18 +22,17 @@ interface PropertyCardProps {
 
 const PropertyCard = ({
   _id,
-  title = "G+2, Real Estate",
-  location = "",
-  price = 149,
-  bedrooms = 3,
-  bathrooms = 2,
-  squareFeet = 95,
-  description = "",
-  type = "",
-  status = "",
-  image = "",
-  rating = 5.0,
-  onFavoritesClick,
+  title,
+  location,
+  price,
+  bedrooms,
+  bathrooms,
+  squareFeet,
+  description,
+  type,
+  status,
+  image,
+  onFavoritesClick, // Destructure the prop
 }: PropertyCardProps) => {
   const handleFavorites = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();

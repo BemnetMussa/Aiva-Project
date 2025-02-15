@@ -1,17 +1,21 @@
 import { Request, Response } from "express";
 
-import Property from "../models/Property";
-import { S3Client, PutObjectCommand, GetObjectCommand, S3LocationFilterSensitiveLog } from "@aws-sdk/client-s3";
+import Property from "../models/property";
+import {
+  S3Client,
+  PutObjectCommand,
+  GetObjectCommand,
+  S3LocationFilterSensitiveLog,
+} from "@aws-sdk/client-s3";
 // import sharp from "sharp";
 // // wrap the req.file.buffer by the sharp and recrate the buffer which allows us to resize the image
 // const buffer = await sharp(req.file.buffer).resize({height: 1920, width: 1080, fit: "contain"}).toBuffer()
 import dotenv from "dotenv";
-import crypto from "crypto"
+import crypto from "crypto";
 
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 dotenv.config();
-
 
 const bucketName = process.env.BUCKET_NAME;
 const bucketRegion = process.env.BUCKET_REGION;
@@ -26,16 +30,14 @@ const s3 = new S3Client({
   region: bucketRegion || "",
 });
 
-const randomImageName = (bytes=32) => crypto.randomBytes(bytes).toString('hex')
-
-
+const randomImageName = (bytes = 32) =>
+  crypto.randomBytes(bytes).toString("hex");
 
 export const fetchProperties = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-
     const properties = await Property.find({}); // Get all properties from the database
 
     for (const property of properties) {
@@ -50,6 +52,9 @@ export const fetchProperties = async (
       );
     }
 
+    // console.log(properties);
+
+
 
     res.status(200).json(properties);
   } catch (error) {
@@ -62,28 +67,27 @@ export const addProperty = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-
-
-
   console.log("req body it should be the text", req.body);
   console.log("this should be the image i guess", req.file);
-  res.status(200).json("it worked")
+  res.status(200).json("it worked");
 
   const imageName = randomImageName();
   const params = {
     Bucket: bucketName,
     Key: imageName,
     Body: req.file?.buffer,
-    ContentType: req.file?.mimetype
+    ContentType: req.file?.mimetype,
+  };
+
+  try {
+    const command = new PutObjectCommand(params);
+    const response = await s3.send(command);
+
+    console.log("uploaded successfully", response);
+  } catch (error) {
+    console.error("Error uploading file:", error);
   }
 
- try {
-   const command = new PutObjectCommand(params);
-   const response = await s3.send(command);
-
- } catch (error) {
-   console.error("Error uploading file:", error);
- }
 
   const {
     title,
@@ -119,7 +123,6 @@ export const addProperty = async (
       type,
       status,
       image: imageName,
-      
     });
 
   } catch (error) {

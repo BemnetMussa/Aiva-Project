@@ -2,8 +2,11 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { EyeOff } from "lucide-react";
 import GoogleAuth from "../components/GoogleAuth";
+import { useDispatch } from "react-redux";
+import { loginFailed, loginSuccess } from "../redux/Slice/authSlice";
 
 const LoginPage: React.FC = () => {
+  const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -21,11 +24,12 @@ const LoginPage: React.FC = () => {
       }),
     });
 
-    if (response.ok) {
-      alert("Login successful!");
+    const data = await response.json();
 
+    if (response.ok) {
+      dispatch(loginSuccess({ user: data.user, token: data.token }));
     } else {
-      alert("Login failed!");
+      dispatch(loginFailed({ error: data.error }));
     }
   };
 
@@ -53,13 +57,11 @@ const LoginPage: React.FC = () => {
             <hr className="w-3/12 h-2 border-gray-500 mt-2" />
           </div>
 
-
           {/* email form */}
 
           <form
             className="flex flex-col items-start gap-4 justify-center h-full mt-4 w-full text-sm"
             onSubmit={handleSubmit}
-
           >
             <div className="flex flex-col w-full space-y-1">
               <label className="">Email adress or username</label>
