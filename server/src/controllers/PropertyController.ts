@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 
-import Property from "../models/property";
+import Property from "../models/Property";
 import {
   S3Client,
   PutObjectCommand,
@@ -67,10 +67,7 @@ export const addProperty = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  console.log("req body it should be the text", req.body);
-  console.log("this should be the image i guess", req.file);
-  res.status(200).json("it worked");
-
+  
   const imageName = randomImageName();
   const params = {
     Bucket: bucketName,

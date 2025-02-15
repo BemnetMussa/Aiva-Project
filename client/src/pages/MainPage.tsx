@@ -101,19 +101,15 @@ export const ZimanyHome: React.FC = () => {
       </div>
 
       <SearchForm />
-
-      <div className="mt-24 w-[85%]">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 ">
-          {properties.map((property, index) => (
-            <PropertyCard
-              key={property._id}
-              {...property} 
-              onFavoritesClick={() => handleFavoritesClick(property._id)}
-            />
-          ))}
+      <div className=" flex items-center justify-center">
+        <div className="mt-24 mx-auto sm:w-full ">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-10 gap-1">
+            {properties.map((property) => (
+              <PropertyCard key={property._id} {...property} />
+            ))}
+          </div>
         </div>
       </div>
-
       {/* Footer section */}
       <div className="flex flex-col justify-center items-center self-stretch px-16 py-24 mt-5 bg-gray-50 max-md:px-5 max-md:max-w-full">
         <Footer />

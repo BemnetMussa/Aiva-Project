@@ -108,9 +108,7 @@ const SignupPage: React.FC = () => {
                 symbols
               </p>
             </div>
-
             {/* gender specification */}
-
             <div className="flex flex-col gap-3 mt-5">
               <p className="font-semibold ">What's your gender ?</p>
               <span className="flex justify-between items-center gap-6 pl-2">
@@ -137,7 +135,6 @@ const SignupPage: React.FC = () => {
                 </label>
               </span>
             </div>
-
             birth date
             <div className="flex flex-col gap-3 mt-6">
               <p className="font-semibold ">What's your date of birth ?</p>
@@ -147,7 +144,6 @@ const SignupPage: React.FC = () => {
                 onChange={(e) => setDob(e.target.value)}
               />
             </div>
-
             <div className="flex  items-center gap-3 text-xs mt-2">
               <input
                 className="border-2"
@@ -175,6 +171,7 @@ const SignupPage: React.FC = () => {
           </form>
         </div>
       </div>
+      
     </div>
   );
 };

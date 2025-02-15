@@ -50,11 +50,12 @@ export const HostAccommodation: React.FC = () => {
       </div>
 
       <div className="mt-36 w-[80%]">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 ">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 ">
           {properties.map((property, index) => (
-            <div key={index} className="">
-              <PropertyCard {...property} />
-            </div>
+            <PropertyCard
+              key={property._id}
+              {...property}
+            />
           ))}
         </div>
       </div>

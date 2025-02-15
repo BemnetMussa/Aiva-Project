@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, redirect } from "react-router-dom";
 import { EyeOff } from "lucide-react";
 import GoogleAuth from "../components/GoogleAuth";
 import { useDispatch } from "react-redux";
@@ -28,6 +28,7 @@ const LoginPage: React.FC = () => {
 
     if (response.ok) {
       dispatch(loginSuccess({ user: data.user, token: data.token }));
+      window.location.href = "/";
     } else {
       dispatch(loginFailed({ error: data.error }));
     }
@@ -90,8 +91,8 @@ const LoginPage: React.FC = () => {
             </div>
 
             <button
-              className="bg-primary px-12 py-3 rounded-xl w-full mt-5 justify-center text-white"
-              type="submit"
+              className="bg-primary-color px-12 py-3 rounded-xl w-full mt-5 justify-center text-white"
+              type="submit" onClick={handleSubmit}
             >
               Login
             </button>

@@ -20,7 +20,6 @@ export const protect = (
   }
 
   try {
-    console.log("ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd")
     console.log(process.env.JWT_SECRET!);
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as UserPayload;
     
