@@ -1,9 +1,8 @@
-import React from 'react';
-import { Heart, Bed, Bath, Square } from 'lucide-react';
-import { image } from 'image-downloader';
+import React from "react";
+import { Heart, Bed, Bath, Square } from "lucide-react";
 
 interface PropertyCardProps {
-  _id: string; // Add the property ID
+  _id: string;
   title?: string;
   location?: string;
   price?: number;
@@ -14,71 +13,79 @@ interface PropertyCardProps {
   type?: string;
   status?: string;
   image?: string;
-  onFavoritesClick?: (id: string) => void; // Add this prop
+  rating?: number;
+  onFavoritesClick?: (id: string) => void;
 }
-
 
 const PropertyCard = ({
   _id,
   title = "G+2, Real Estate",
-  location = "Addis Ababa, Goffa",
+  location = "",
   price = 149,
   bedrooms = 3,
   bathrooms = 2,
   squareFeet = 95,
-  description = "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Sapiente quo odit et porro aut voluptatem saepe suscipit accusamus voluptas quam!",
-  type = "Rent",
-  status = "Available",
-  image="",
-  onFavoritesClick, // Destructure the prop
+  description = "",
+  type = "",
+  status = "",
+  image = "",
+  rating = 5.0,
+  onFavoritesClick,
 }: PropertyCardProps) => {
-  
   const handleFavorites = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault(); // Prevent default behavior
+    e.preventDefault();
     if (onFavoritesClick) {
-      onFavoritesClick(_id); // Call the callback with the property ID
+      onFavoritesClick(_id);
     }
   };
+
   return (
-    <div className="w-[401px] h-[599px] rounded-lg bg-white shadow-sm">
+    <div className="w-[401px] bg-white h-[599px] overflow-hidden shadow flex flex-col justify-between ">
       {/* Image Container */}
-      <div className="relative p-2">
-        <div className="h-[329px] w-full bg-gray-200 flex items-center justify-center">
-          <img src={image} className="w-full h-full object-cover block" />
+      <div className="relative">
+        <div className="aspect-[4/3] bg-gray-100">
+          {image ? (
+            <img
+              src={image}
+              alt={title}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <svg
+                className="w-12 h-12 text-gray-300"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
+          )}
+        </div>
+
+        <div></div>
+
+        {/* Status Badge */}
+        <div className="absolute top-2 left-2 bg-green-400 text-black px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1">
+          <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+          {status}
         </div>
 
         {/* Favorite Button */}
         <button
-          onClick={handleFavorites} // Use the new handler
-          className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-md"
+          onClick={handleFavorites}
+          className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-md"
         >
-          <Heart className="w-5 h-5 text-blue-500" />
+          <Heart className="w-5 h-5 text-blue-400" />
         </button>
 
-        <div className="absolute top-4 left-4 p-2 bg-green-400 rounded-full shadow-md flex gap-1">
-          <svg
-            width="14"
-            height="15"
-            viewBox="0 0 14 15"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M13.0916 7.20002C13.0916 10.7131 10.3875 13.5182 7.10324 13.5182C3.81903 13.5182 1.11487 10.7131 1.11487 7.20002C1.11487 3.68693 3.81903 0.881836 7.10324 0.881836C10.3875 0.881836 13.0916 3.68693 13.0916 7.20002ZM4.31394 7.20002C4.31394 8.78112 5.53968 10.1057 7.10324 10.1057C8.6668 10.1057 9.89254 8.78112 9.89254 7.20002C9.89254 5.61891 8.6668 4.29435 7.10324 4.29435C5.53968 4.29435 4.31394 5.61891 4.31394 7.20002Z"
-              fill="#00FF0D"
-              stroke="black"
-            />
-          </svg>
-
-          <p>{status}</p>
-        </div>
-
-        <div className="absolute bottom-3 left-4 p-2 bg-white rounded-full shadow-md">
-          <p>{type}</p>
+        {/* Type Badge */}
+        <div className="absolute bottom-2 left-2 bg-white px-3 py-1 rounded-full text-sm">
+          {type}
         </div>
 
         {/* More Options */}
-        <button className="absolute bottom-3 right-3 p-1">
+        <button className="absolute bottom-2 right-2 p-1">
           <svg
             className="w-6 h-6 text-white"
             fill="currentColor"
@@ -89,48 +96,50 @@ const PropertyCard = ({
         </button>
       </div>
 
-      {/* Content */}
-      <div className="p-4 gap-2">
-        <div className="flex justify-between items-start mb-2">
-          <div>
-            <h3 className="font-semibold text-lg">{title}</h3>
-            <p className=" text-slate-300 text-sm">{location}</p>
+      <div>
+        {/* Content */}
+        <div className="p-4 space-y-4">
+          <div className="flex justify-between items-start">
+            <div>
+              <h3 className="font-semibold text-lg">{title}</h3>
+              <p className="text-gray-400 text-sm">{location}</p>
+            </div>
+            <div className="flex items-center gap-1">
+              <span className="font-semibold">${price}</span>
+              <span className="text-gray-500 text-sm">/night</span>
+            </div>
           </div>
-          <div className="flex items-center">
-            <span className="font-semibold">${price}</span>
-            <span className="text-gray-600 text-sm">/night</span>
-          </div>
-        </div>
 
-        {/* Property Features */}
-        <div className="flex justify-start gap-4 text-gray-600">
-          <div className="flex items-center gap-1">
-            <Bed className="w-6 h-6" />
-            <span className="text-sm">{bedrooms} Bed room</span>
+          {/* Property Features */}
+          <div className="flex gap-4 text-gray-600 text-sm">
+            <div className="flex items-center gap-1">
+              <Bed className="w-4 h-4" />
+              <span>{bedrooms} Bed room</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Bath className="w-4 h-4" />
+              <span>{bathrooms} Bath room</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Square className="w-4 h-4" />
+              <span>{squareFeet} square feet</span>
+            </div>
           </div>
-          <div className="flex items-center gap-1">
-            <Bath className="w-6 h-6" />
-            <span className="text-sm">{bathrooms} Bath room</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <Square className="w-6 h-6" />
-            <span className="text-sm">{squareFeet} square feet</span>
-          </div>
-        </div>
 
-        {/* Description */}
-        <div className="pt-3">
-          <p className="line-clamp-3 text-slate-300">{description}</p>
-        </div>
+          {/* Description */}
+          <p className="text-gray-400 text-sm line-clamp-3 mb-14">
+            {description}
+          </p>
 
-        {/* buttons */}
-        <div className="flex justify-center text-white font-semibold pt-3 gap-3">
-          <button className="px-14 py-3 bg-primary-color rounded-lg ">
-            Message
-          </button>
-          <button className="px-9 py-3 bg-primary-color rounded-lg">
-            Show number
-          </button>
+          {/* Buttons */}
+          <div className="grid grid-cols-2 gap-4 ">
+            <button className="w-full bg-blue-400 text-white py-4 rounded-lg font-medium">
+              Message
+            </button>
+            <button className="w-full bg-blue-400 text-white py-4 rounded-lg font-medium">
+              Show Number
+            </button>
+          </div>
         </div>
       </div>
     </div>

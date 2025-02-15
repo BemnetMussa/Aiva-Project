@@ -88,7 +88,7 @@ export const ZimanyHome: React.FC = () => {
         />
         <div className="flex mt-10 relative flex-col mb-0 ml-8 max-w-full w-[721px] max-md:mb-2.5">
           <h1 className="self-center text-6xl font-extrabold leading-none max-md:max-w-full max-md:text-4xl">
-            Welcome to Zemenay ተከራይ
+            Welcome to dxios
           </h1>
           <p className="text-xl font-medium leading-8 max-md:max-w-full">
             <br />
@@ -102,12 +102,12 @@ export const ZimanyHome: React.FC = () => {
 
       <SearchForm />
 
-      <div className="mt-24 w-[80%]">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 ">
+      <div className="mt-24 w-[85%]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 ">
           {properties.map((property, index) => (
             <PropertyCard
               key={property._id}
-              {...property}
+              {...property} 
               onFavoritesClick={() => handleFavoritesClick(property._id)}
             />
           ))}

@@ -18,7 +18,7 @@ const App = () => {
         <Route path="/chat" element={<div>Chat Page</div>} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/add-property" element={<AddPropertyPage />} />
+        <Route path="/addproperty" element={<AddPropertyPage />} />
       </Routes>
     </Router>
   );

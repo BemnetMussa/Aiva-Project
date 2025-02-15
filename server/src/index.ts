@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import "dotenv/config";
+import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./config/db";
 import userRoutes from "./routes/userRoutes";
@@ -45,10 +45,6 @@ app.use("/api/favorites", favoritesRoutes)
 
 
 
-
-app.get("/", (req: Request, res: Response) => {
-  res.send("API is running...");
-});
 
 // Start server
 const PORT = process.env.PORT || 5000;

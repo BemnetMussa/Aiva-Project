@@ -1,11 +1,19 @@
 import { Request, Response } from "express";
 import User from "../models/User";
-// import Property from "../models/property";
 import { generateToken } from "../utils/generateToken";
-// import { protect } from "../middleware/authMiddleware";
+
 
 export const signup = async (req: Request, res: Response): Promise<void> => {
-  const { name, email, password, gender, dob, agree } = req.body;
+  console.log("user singing up started")
+  const { name,
+     email,
+     password, 
+     gender, 
+     dob, 
+     agree 
+    } = req.body;
+
+    console.log(name, email, password)
 
   try {
     const userExists = await User.findOne({ email });
@@ -22,15 +30,19 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
       dob,
       agree,
     });
+ 
+    console.log(user)
 
     res.status(201).json({ message: "User created successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Servererror" });
+    console.log(error)
+    res.status(500).json({ message: "Server error" });
   }
 };
 
 export const login = async (req: Request, res: Response): Promise<void> => {
   const { email, password } = req.body;
+
   try {
     const user: any = await User.findOne({ email });
     if (!user) {
@@ -63,6 +75,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+
 export const google = async (req: Request, res: Response): Promise<void> => {
   const { name, email } = req.body;
 
@@ -82,3 +95,4 @@ export const google = async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({ message: "Servererror" });
   }
 };
+
