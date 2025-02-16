@@ -4,9 +4,10 @@ import SearchForm from "../components/SearchForm";
 import { Pagination } from "../components/Pagination";
 import { SearchFormData } from "../components/types";
 import Navbar from "../components/Navbar";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import Footer from "../components/Footer";
 import { useState, useEffect } from "react";
+import { LogIn } from "lucide-react";
 
 interface Property {
   _id: string;
@@ -34,13 +35,12 @@ export const ZimanyHome: React.FC = () => {
 
   useEffect(() => {
     const fetchProperties = async () => {
-      console.log("hello form the frontend fetch proeprties");
       try {
         const response = await fetch("http://localhost:5000/api/properties", {
           method: "GET",
           credentials: "include",
         });
-        console.log(response);
+        console.log(response.json);
         const data = await response.json();
         setProperties(data);
       } catch (error) {
@@ -55,6 +55,7 @@ export const ZimanyHome: React.FC = () => {
     propertyId
   ) => {
     try {
+     
       const response = await fetch("http://localhost:5000/api/favorites/add", {
         method: "POST",
         credentials: "include",
@@ -105,7 +106,11 @@ export const ZimanyHome: React.FC = () => {
         <div className="mt-24 mx-auto sm:w-full ">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-10 gap-1">
             {properties.map((property) => (
-              <PropertyCard key={property._id} {...property} />
+              <PropertyCard
+                key={property._id}
+                {...property}
+                onFavoritesClick={(id) => handleFavoritesClick(id)}
+              />
             ))}
           </div>
         </div>

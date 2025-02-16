@@ -5,6 +5,7 @@ import connectDB from "./config/db";
 import userRoutes from "./routes/userRoutes";
 import propertyRoutes from "./routes/propertyRoutes";
 import favoritesRoutes from "./routes/favoritesRoutes";
+import categoryRoute from "./routes/categoryRoute"
 import cookieParser from "cookie-parser";
 import multer from "multer";
 
@@ -30,7 +31,8 @@ const upload = multer({ storage: storage });
 // Routes
 app.use("/api/users", userRoutes);
 app.use("/api/properties", upload.single("image"), propertyRoutes);
-app.use("/api/favorites", favoritesRoutes);
+app.use("/api/favorites", upload.single("image"), favoritesRoutes);
+app.use("/api/categories", categoryRoute);
 
 // Start server
 const PORT = process.env.PORT || 5000;

@@ -33,7 +33,7 @@ const PropertyCard = ({
   onFavoritesClick,
 }: PropertyCardProps) => {
   return (
-    <div className=" w-[451px] h-[649px] bg-gray-50 md:rounded-lg overflow-hidden sm:rounded-none ">
+    <div className=" w-[451px] md:h-[649px] bg-gray-50 md:rounded-lg overflow-hidden sm:rounded-none ">
       {/* Card Container - Flex row on mobile, column on larger screens */}
       <div className="flex flex-row sm:flex-col h-full">
         {/* Image Section - Takes full height on mobile */}
