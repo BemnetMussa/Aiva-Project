@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import { Bell, User, MessageCircle } from "lucide-react";
 import { useSelector } from "react-redux";

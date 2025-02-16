@@ -2,9 +2,11 @@ import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { app } from "../firebase";
 import { useDispatch } from "react-redux";
 import { loginFailed, loginSuccess } from "../redux/Slice/authSlice";
+import { useNavigate } from "react-router-dom";
 
 // google auth
 const GoogleAuth = () => {
+  const navigator = useNavigate();
   const dispatch = useDispatch();
   const auth = getAuth(app);
 
@@ -14,6 +16,9 @@ const GoogleAuth = () => {
     provider.setCustomParameters({ prompt: "select_account" });
 
     const responseFromGoogle = await signInWithPopup(auth, provider);
+    if (responseFromGoogle) {
+      navigator("http://localhost:5173/");
+    }
     const response = await fetch("http://localhost:5000/api/users/google", {
       method: "POST",
       headers: {
@@ -28,7 +33,7 @@ const GoogleAuth = () => {
 
     const data = await response.json();
 
-    if (response) {
+    if (response.ok) {
       dispatch(loginSuccess({ user: data.user, token: data.token }));
     }
     dispatch(loginFailed({ error: data.error }));
@@ -39,7 +44,7 @@ const GoogleAuth = () => {
       className="flex flex-col items-center justify-center gap-5 w-full"
       onClick={handleGoogleAuth}
     >
-      <button className="flex items-center justify-center gap-3 border border-gray-300 w-full py-2 rounded-full">
+      <button className="flex cursor-pointer items-center justify-center gap-3 border border-gray-300 w-full py-2 rounded-full">
         <img
           src="https://www.svgrepo.com/show/355037/google.svg"
           alt="Google"
