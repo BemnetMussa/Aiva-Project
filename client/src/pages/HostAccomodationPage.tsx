@@ -1,6 +1,7 @@
 import PropertyCard from "../components/PropertyCard";
 import Navbar from "../components/Navbar";
 import { useState, useEffect } from "react";
+import HostPropertyCard from "../components/HostPropertyCard";
 
 interface Property {
   _id: string;
@@ -50,7 +51,7 @@ export const HostAccommodation: React.FC = () => {
         <div className="mt-24 mx-auto sm:w-full ">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-10 gap-1">
             {properties.map((property) => (
-              <PropertyCard
+              <HostPropertyCard
                 key={property._id}
                 {...property}
                 
