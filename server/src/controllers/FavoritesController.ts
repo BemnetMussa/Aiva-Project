@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import Favorites from "../models/Favorites";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import Property from "../models/property";
 
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import {
@@ -10,7 +11,7 @@ import {
   GetObjectCommand,
   S3LocationFilterSensitiveLog,
 } from "@aws-sdk/client-s3";
-import Property from "../models/Property";
+
 
 dotenv.config();
 
@@ -88,8 +89,6 @@ export const userFavorites = async (req: Request, res: Response): Promise<void> 
 
 
 
-<<<<<<< HEAD
-
 // userId, propertyId
 // like from the user i will need the userId and also the Poerpty that have he clikced
 
@@ -119,5 +118,3 @@ export const addFavorites = async (
     res.status(500).json({ message: "Server error" });
   }
 };
-=======
->>>>>>> 7a35f042f42e843535be3d2674c3ff2c77061809
