@@ -65,10 +65,9 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     });
 
     console.log("cookie created successfully with token:", token);
-
     res.status(200).json({
       message: "Login successful",
-      user: { name: user.name, email: user.email, isAdmin: user.isAdmin },
+      user: { name: user.name, email: user.email, isAdmin: user.isAdmin, token: token },
     });
   } catch (error) {
     res.status(500).json({ message: "Server error" });

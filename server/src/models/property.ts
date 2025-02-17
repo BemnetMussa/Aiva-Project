@@ -13,7 +13,6 @@ const propertySchema = new mongoose.Schema({
     trim: true,
   },
 
-
   location: {
     type: String,
     required: true,
@@ -39,6 +38,11 @@ const propertySchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  categoryId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "UserCategory",
+    required: true,
+  },
 
   description: {
     type: String,
@@ -62,7 +66,7 @@ const propertySchema = new mongoose.Schema({
   image: {
     type: String,
     required: true,
-  }
+  },
 });
 
 const Property = mongoose.model("Property", propertySchema);

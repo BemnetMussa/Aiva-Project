@@ -20,7 +20,7 @@ dotenv.config();
 const bucketName = process.env.BUCKET_NAME;
 const bucketRegion = process.env.BUCKET_REGION;
 const secretAccesskey = process.env.SECRET_ACCESS_KEY;
-const accessKey = process.env.ACCESS_KEY;
+const accessKey = process.env.ACCESS_KEY; 
 
 const s3 = new S3Client({
   credentials: {
@@ -129,6 +129,17 @@ export const userProperty = async (
   try {
     const userId = (req as any).user?.id;
     const properties = await Property.find({ userId });
+    for (const property of properties) {
+      // For each post, generate a signed URL and save it to the post object
+      property.image = await getSignedUrl(
+        s3,
+        new GetObjectCommand({
+          Bucket: bucketName,
+          Key: property.image,
+        }),
+        { expiresIn: 60 } // 60 seconds
+      );
+    }
 
     res.status(200).json(properties);
   } catch (error) {

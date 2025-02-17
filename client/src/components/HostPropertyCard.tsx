@@ -17,7 +17,7 @@ interface PropertyCardProps {
   onFavoritesClick?: (id: string) => void;
 }
 
-const PropertyCard = ({
+const HostPropertyCard = ({
   _id,
   title,
   location,
@@ -32,6 +32,84 @@ const PropertyCard = ({
   image,
   onFavoritesClick,
 }: PropertyCardProps) => {
+  const handleListing: (propertyId: string) => Promise<void> = async (
+    propertyId
+  ) => {
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/properties/update",
+        {
+          method: "PUT",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ propertyId }), // Send the property ID to the backend
+        }
+      );
+
+      if (response.ok) {
+        console.log("Property Updated successfully!");
+      } else {
+        console.error("Failed to update try again later.");
+      }
+    } catch (error) {
+      console.error("Error occur trying to update property:", error);
+    }
+  };
+
+  const handleRemoveListing: (propertyId: string) => Promise<void> = async (
+    propertyId
+  ) => {
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/properties/delete",
+        {
+          method: "DELETE",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ propertyId }), // Send the property ID to the backend
+        }
+      );
+
+      if (response.ok) {
+        console.log("Property Updated successfully!");
+      } else {
+        console.error("Failed to update try again later.");
+      }
+    } catch (error) {
+      console.error("Error occur trying to update property:", error);
+    }
+  };
+
+  const handlePropertyEdit: (propertyId: string) => Promise<void> = async (
+    propertyId
+  ) => {
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/properties/edit",
+        {
+          method: "PUT",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ propertyId }), // Send the property ID to the backend
+        }
+      );
+
+      if (response.ok) {
+        console.log("Property Updated successfully!");
+      } else {
+        console.error("Failed to update try again later.");
+      }
+    } catch (error) {
+      console.error("Error occur trying to update property:", error);
+    }
+  };
+
   return (
     <div className=" w-[451px] md:h-[649px] bg-gray-50 md:rounded-lg overflow-hidden sm:rounded-none ">
       {/* Card Container - Flex row on mobile, column on larger screens */}
@@ -79,7 +157,9 @@ const PropertyCard = ({
                 stroke="black"
               />
             </svg>
-            <p className="font-semibold">{status}</p>
+            <p className="font-semibold">
+              {status === "available" ? "Listed" : "Delisted"}
+            </p>
           </div>
 
           {/* Favorite Button */}
@@ -105,6 +185,31 @@ const PropertyCard = ({
           {/* Property Type Badge */}
           <div className="absolute bottom-2 left-2 font-semibold bg-[#D0D5D8] px-2 py-1 rounded-full text-xs">
             {type}
+          </div>
+
+          {/* Property edit Icon */}
+          <div className="absolute bottom-2 right-2 py-1">
+            <button
+              onClick={() => {
+                handlePropertyEdit(_id);
+              }}
+            >
+              <svg
+                width="38"
+                height="35"
+                viewBox="0 0 38 35"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M17.0467 5.83285H6.19879C5.37678 5.83285 4.58844 6.14014 4.00719 6.68712C3.42594 7.2341 3.0994 7.97597 3.0994 8.74952V29.1662C3.0994 29.9397 3.42594 30.6816 4.00719 31.2286C4.58844 31.7756 5.37678 32.0828 6.19879 32.0828H27.8945C28.7165 32.0828 29.5049 31.7756 30.0861 31.2286C30.6674 30.6816 30.9939 29.9397 30.9939 29.1662V18.9578M28.6694 3.64535C29.2859 3.06519 30.1221 2.73926 30.9939 2.73926C31.8658 2.73926 32.702 3.06519 33.3185 3.64535C33.935 4.22551 34.2813 5.01238 34.2813 5.83285C34.2813 6.65332 33.935 7.44019 33.3185 8.02035L18.5964 21.8745L12.3976 23.3328L13.9473 17.4995L28.6694 3.64535Z"
+                  stroke="white"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
           </div>
         </div>
 
@@ -195,13 +300,24 @@ const PropertyCard = ({
             {description}
           </div>
 
-          {/* Buttons */}
-          <div className="md:flex hidden gap-4 w-full mt-auto">
-            <button className="flex-1 md:px-6 py-2 md:py-3 bg-primary-color text-white text-lg font-semibold rounded-lg sm:gap-">
-              Message
+          {/* Host Buttons */}
+          <div className="flex flex-col gap-4 w-full mt-auto">
+            <button
+              className="flex-1 w-full py-2 md:py-3
+             bg-primary-color text-white text-xl
+              rounded-lg sm:gap-"
+              onClick={(e) => handleListing(_id)}
+            >
+              List / Delist
             </button>
-            <button className="flex-1 md:px-6 py-2 md:py-3 bg-primary-color text-white text-lg font-semibold rounded-lg">
-              Show Number
+            <button
+              className="flex-1 w-full py-2
+              md:py-3 bg-primary-color
+              text-white text-xl
+              rounded-lg"
+              onClick={(e) => handleRemoveListing(_id)}
+            >
+              Remove Property
             </button>
           </div>
         </div>
@@ -210,4 +326,4 @@ const PropertyCard = ({
   );
 };
 
-export default PropertyCard;
+export default HostPropertyCard;

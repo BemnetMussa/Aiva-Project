@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, redirect } from "react-router-dom";
+import { Link, Navigate, redirect } from "react-router-dom";
 import { EyeOff } from "lucide-react";
 import GoogleAuth from "../components/GoogleAuth";
 import { useDispatch } from "react-redux";
@@ -9,6 +9,7 @@ const LoginPage: React.FC = () => {
   const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [redirect, setRedirect] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,6 +19,7 @@ const LoginPage: React.FC = () => {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include",
       body: JSON.stringify({
         email,
         password,
@@ -27,12 +29,17 @@ const LoginPage: React.FC = () => {
     const data = await response.json();
 
     if (response.ok) {
+      console.log(response)
       dispatch(loginSuccess({ user: data.user, token: data.token }));
-      window.location.href = "/";
+      setRedirect(true)
     } else {
       dispatch(loginFailed({ error: data.error }));
     }
   };
+
+  if (redirect) {
+    return <Navigate to="/" />;
+  }
 
   return (
     <div className="flex items-center justify-center h-lvh py-6 bg-gray-50">

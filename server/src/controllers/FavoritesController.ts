@@ -1,21 +1,94 @@
 import { Request, Response } from "express";
 import Favorites from "../models/Favorites";
 import mongoose from "mongoose";
+import dotenv from "dotenv";
 
-export const userFavorites = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import {
+  S3Client,
+  PutObjectCommand,
+  GetObjectCommand,
+  S3LocationFilterSensitiveLog,
+} from "@aws-sdk/client-s3";
+import Property from "../models/Property";
+
+dotenv.config();
+
+const bucketName = process.env.BUCKET_NAME;
+const bucketRegion = process.env.BUCKET_REGION;
+const secretAccesskey = process.env.SECRET_ACCESS_KEY;
+const accessKey = process.env.ACCESS_KEY;
+
+const s3 = new S3Client({
+  credentials: {
+    accessKeyId: accessKey || "",
+    secretAccessKey: secretAccesskey || "",
+  },
+  region: bucketRegion || "",
+});
+
+export const userFavorites = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = (req as any).user?.id;
-    const properties = await Favorites.find({ userId });
 
-    res.status(200).json(properties);
+    // getting the Favorites based on userId
+    const favoritesId = await Favorites.find({ userId }).lean();
+
+    // filtering the propertyIds of the user
+    const propertyIds = favoritesId.map((favorite) => favorite.propertyId);
+
+    // fetching the object form the properties
+    const properties = await Property.find({ _id: { $in: propertyIds } }).lean();
+
+    // Generate signed URLs in parallel
+    if (properties.length > 0) {
+      const propertiesWithImages = await Promise.all(
+        properties.map(async (property) => {
+          if (!property.image) {
+            console.log("No image found by property", property._id);
+          }
+
+          try {
+            const signedURL = await getSignedUrl(
+              s3,
+              new GetObjectCommand({
+                Bucket: bucketName,
+                Key: property.image,
+              }),
+              { expiresIn: 60 * 60 }
+            );
+
+            return { ...property, image: signedURL };
+          } catch (error) {
+            console.log(
+              "Error getting signed URL for property:",
+              property._id,
+              error
+            );
+            return property;
+          }
+        })
+      );
+
+      console.log("Final properties with images:", propertiesWithImages);
+      res.status(200).json(propertiesWithImages);
+    } else {
+      console.log("No properties found for the given IDs");
+      res.status(200).json([]);
+    }
   } catch (error) {
-    console.error("Error fetching user favorites properties:", error);
-    res.status(500).json({ message: "Server error" });
+    console.error("Error in userFavorites:", error);
+    res.status(500).json({
+      message: "Failed to fetch favorite properties",
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
   }
 };
+
+
+
+
+<<<<<<< HEAD
 
 // userId, propertyId
 // like from the user i will need the userId and also the Poerpty that have he clikced
@@ -46,3 +119,5 @@ export const addFavorites = async (
     res.status(500).json({ message: "Server error" });
   }
 };
+=======
+>>>>>>> 7a35f042f42e843535be3d2674c3ff2c77061809

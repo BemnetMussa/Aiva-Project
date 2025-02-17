@@ -1,6 +1,7 @@
 import PropertyCard from "../components/PropertyCard";
 import Navbar from "../components/Navbar";
 import { useState, useEffect } from "react";
+import HostPropertyCard from "../components/HostPropertyCard";
 
 interface Property {
   _id: string;
@@ -20,16 +21,12 @@ export const HostAccommodation: React.FC = () => {
 
   useEffect(() => {
     const fetchProperties = async () => {
-      console.log("hello form the frontend fetch proeprties");
       try {
-        const response = await fetch(
-          "http://localhost:5000/api/properties/fetchProperty",
-          {
-            method: "GET",
-            credentials: "include",
-          }
-        );
-        console.log(response);
+        const response = await fetch("http://localhost:5000/api/properties/fetchProperty", {
+          method: "GET",
+          credentials: "include",
+        });
+        console.log(response.json);
         const data = await response.json();
         setProperties(data);
       } catch (error) {
@@ -40,23 +37,27 @@ export const HostAccommodation: React.FC = () => {
     fetchProperties();
   }, []);
 
+
   return (
-    <div className="flex relative overflow-hidden flex-col items-center h-[100vh] w-full pt-14 bg-[#f8f9fa] border border-cyan-400 border-solid shadow-[0px_3px_6px_rgba(18,15,40,0.12)]">
+    <div className="flex relative overflow-hidden flex-col items-center h-full w-full pt-14 bg-[#f3f3f3] border border-cyan-400 border-solid shadow-[0px_3px_6px_rgba(18,15,40,0.12)]">
       {/* Navbar section */}
       <Navbar />
 
       <div className="items-start p-8 absolute left-12 top-24">
-        <h2 className="border-b-4 border-black font-bold">Current Bookings</h2>
+        <h2 className="border-b-4 border-black font-bold">Hosted Bookings</h2>
       </div>
 
-      <div className="mt-36 w-[80%]">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 ">
-          {properties.map((property, index) => (
-            <PropertyCard
-              key={property._id}
-              {...property}
-            />
-          ))}
+      <div className="p-20 flex items-center justify-center">
+        <div className="mt-24 mx-auto sm:w-full ">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-10 gap-1">
+            {properties.map((property) => (
+              <HostPropertyCard
+                key={property._id}
+                {...property}
+                
+              />
+            ))}
+          </div>
         </div>
       </div>
     </div>

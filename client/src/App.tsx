@@ -7,6 +7,7 @@ import AddPropertyPage from "./pages/AddPropertyPage";
 import DetailPropertyPage from "./pages/DetailPropertyPage";
 import ChatPage from "./pages/ChatPage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { FavoritesPage } from "./pages/FavoritesPage";
 
 const App = () => {
   return (
@@ -21,7 +22,7 @@ const App = () => {
           {/* Add other routes as needed */}
           <Route path="/accommodations" element={<HostAccommodation />} />
           <Route path="/earnings" element={<div>Earnings Page</div>} />
-          <Route path="/favorites" element={<div>Favorites Page</div>} />
+          <Route path="/favorites" element={<FavoritesPage />} />
           <Route path="/chat" element={<ChatPage />} />
           <Route path="/addproperty" element={<AddPropertyPage />} />
           <Route path="/property-detail" element={<DetailPropertyPage />} />
