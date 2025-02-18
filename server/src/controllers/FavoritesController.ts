@@ -10,7 +10,7 @@ import {
   GetObjectCommand,
   S3LocationFilterSensitiveLog,
 } from "@aws-sdk/client-s3";
-import Property from "../models/Property";
+import Property from "../models/property";
 
 dotenv.config();
 
@@ -27,7 +27,10 @@ const s3 = new S3Client({
   region: bucketRegion || "",
 });
 
-export const userFavorites = async (req: Request, res: Response): Promise<void> => {
+export const userFavorites = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const userId = (req as any).user?.id;
 
@@ -38,7 +41,9 @@ export const userFavorites = async (req: Request, res: Response): Promise<void> 
     const propertyIds = favoritesId.map((favorite) => favorite.propertyId);
 
     // fetching the object form the properties
-    const properties = await Property.find({ _id: { $in: propertyIds } }).lean();
+    const properties = await Property.find({
+      _id: { $in: propertyIds },
+    }).lean();
 
     // Generate signed URLs in parallel
     if (properties.length > 0) {
@@ -85,11 +90,6 @@ export const userFavorites = async (req: Request, res: Response): Promise<void> 
   }
 };
 
-
-
-
-<<<<<<< HEAD
-
 // userId, propertyId
 // like from the user i will need the userId and also the Poerpty that have he clikced
 
@@ -119,5 +119,3 @@ export const addFavorites = async (
     res.status(500).json({ message: "Server error" });
   }
 };
-=======
->>>>>>> 7a35f042f42e843535be3d2674c3ff2c77061809
