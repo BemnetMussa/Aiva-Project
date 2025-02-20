@@ -4,7 +4,10 @@ import {
   generateAccessToken,
   generateRefreshToken,
   generateToken,
+  verifyToken,
 } from "../utils/generateToken";
+
+import admin from "firebase-admin";
 
 // sign up function
 export const signup = async (req: Request, res: Response): Promise<void> => {
@@ -132,30 +135,69 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 export const logout = (req: Request, res: Response) => {
   res.clearCookie("accessToken");
   res.clearCookie("refreshToken");
-  res.status(200).json({ message: "Logged out successfully" });
+  return res.status(200).json({ message: "Logged out successfully" });
 };
 
 // refresh-token function
-export const refreshToken = async () => {};
+export const refreshToken = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const refreshToken = req.cookies.refreshToken;
+
+  if (!refreshToken) {
+    res.status(403).json({ message: "Refresh Token is missing or invalid" });
+    return;
+  }
+
+  const ValidToken = verifyToken(refreshToken);
+
+  if (ValidToken) {
+    const newAccessToken = generateAccessToken(refreshToken);
+    res.cookie("accessToken", newAccessToken, {
+      httpOnly: true,
+      // secure: process.env.NODE_ENV === "production", // Comment this out for development
+      // sameSite: 'Strict'
+      maxAge: 15 * 60 * 1000,
+    });
+
+    return;
+  }
+};
 
 // forgot password
-export const forgotPassword = async () => {};
+export const forgotPassword = async (req: Request, res: Response) => {};
 
 // reset  password
 export const resetPassword = async () => {};
 
+// Initialize Firebase Admin SDK
+admin.initializeApp({
+  credential: admin.credential.cert(require("../serviceAccountKey.json")),
+});
+
 // google auth function
 export const google = async (req: Request, res: Response): Promise<void> => {
-  const { name, email } = req.body;
-
   try {
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-      res.status(400).json({ message: "User already exists" });
+    const firebaseToken = req.headers.authorization?.split(" ")[1];
+
+    if (!firebaseToken) {
+      res.status(401).json({ message: "No token provided" });
       return;
     }
 
-    const user = await User.create({ name, email });
+    // 🔹 Verify Firebase Token (Checks with Google)
+    const decodedToken = await admin.auth().verifyIdToken(firebaseToken);
+
+    let user = await User.findOne({ email: decodedToken.email });
+
+    if (!user) {
+      user = await User.create({
+        name: decodedToken.name,
+        email: decodedToken.email,
+      });
+    }
+
     const userData = user.toObject();
     const { password, ...rest } = userData;
 
@@ -164,5 +206,6 @@ export const google = async (req: Request, res: Response): Promise<void> => {
     res.status(201).json({ message: "User created successfully", rest });
   } catch (error) {
     res.status(500).json({ message: "Servererror" });
+    return;
   }
 };
