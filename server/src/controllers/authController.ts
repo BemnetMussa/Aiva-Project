@@ -7,6 +7,8 @@ import {
   verifyToken,
 } from "../utils/generateToken";
 
+import crypto from "crypto";
+import nodemailer from "nodemailer";
 import admin from "firebase-admin";
 
 // sign up function
@@ -135,7 +137,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 export const logout = (req: Request, res: Response) => {
   res.clearCookie("accessToken");
   res.clearCookie("refreshToken");
-  return res.status(200).json({ message: "Logged out successfully" });
+  res.status(200).json({ message: "Logged out successfully" });
 };
 
 // refresh-token function
@@ -166,7 +168,49 @@ export const refreshToken = async (
 };
 
 // forgot password
-export const forgotPassword = async (req: Request, res: Response) => {};
+export const forgotPassword = async (req: Request, res: Response) => {
+  try {
+    const { email } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      res.status(400).json({
+        message: "email is not registered",
+      });
+      return;
+    }
+
+    // Generate a reset token
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpire = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes expiration
+
+    await user.save();
+
+    // Send the email
+    const resetLink = `http://localhost:5173/reset-password/${resetToken}`;
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: user.email,
+      subject: "Password Reset Request",
+      text: `Click on the following link to reset your password and the link will expire after 10min: ${resetLink}`,
+    });
+    res.status(200).json({ message: "Password reset link sent" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+    return;
+  }
+};
 
 // reset  password
 export const resetPassword = async () => {};
