@@ -213,7 +213,35 @@ export const forgotPassword = async (req: Request, res: Response) => {
 };
 
 // reset  password
-export const resetPassword = async () => {};
+export const resetPassword = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { token } = req.params;
+    const { newPassword } = req.body;
+
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpire: { $gt: new Date() }, // ensure token is not expire and make sure the time is in the future
+    });
+
+    if (!user) {
+      res.status(400).json({ message: "Invalid or expired token" });
+      return;
+    }
+
+    user.password = newPassword;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+    await user.save();
+
+    res.status(200).json({ message: "Password reset successful" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+    return;
+  }
+};
 
 // Initialize Firebase Admin SDK
 admin.initializeApp({
