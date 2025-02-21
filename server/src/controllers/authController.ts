@@ -14,10 +14,7 @@ import admin from "firebase-admin";
 // sign up function
 export const signup = async (req: Request, res: Response): Promise<void> => {
   try {
-    console.log("user singing up started");
     const { name, email, password, gender, dob, agree } = req.body;
-
-    console.log(name, email, password, gender, dob, agree);
 
     if (!name || !email || !password || !dob || agree === undefined) {
       res.status(400).json({ message: "All fields are required" });
@@ -38,8 +35,6 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
       dob,
       agree,
     });
-
-    console.log(user);
 
     const accessToken = await generateAccessToken(user);
     const refreshToken = await generateRefreshToken(user);
@@ -62,9 +57,8 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
     });
 
     const userData = user.toObject();
-    const { password: _, ...rest } = userData;
+    const { password: pass, refreshToken: refresh, ...rest } = userData;
 
-    console.log(rest);
     res.status(201).json({
       message: "User created successfully",
       rest,
@@ -77,10 +71,11 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
 
 // sign in function
 export const login = async (req: Request, res: Response): Promise<void> => {
-  const { email, password } = req.body;
-
   try {
+    const { email, password } = req.body;
+
     const user: any = await User.findOne({ email });
+
     if (!user) {
       res.status(400).json({ message: "Invalid email or password" });
       return;
@@ -94,15 +89,10 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     }
 
     const accessToken = generateAccessToken(user._id);
-    const refreshToken = generateRefreshToken(user._id);
-
-    console.log(
-      "cookie created successfully with token:",
-      accessToken,
-      refreshToken
-    );
+    const refreshToken = await generateRefreshToken(user._id);
 
     user.refreshToken = refreshToken;
+
     await user.save();
 
     res.cookie("accessToken", accessToken, {
@@ -120,9 +110,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     });
 
     const userData = user.toObject();
-    const { password: _, ...rest } = userData;
-
-    console.log(rest);
+    const { password: pass, refreshToken: refresh, ...rest } = userData;
 
     res.status(200).json({
       message: "Login successful",

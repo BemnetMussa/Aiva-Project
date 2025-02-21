@@ -39,9 +39,7 @@ export const updateUserProfile = async (req: Request, res: Response) => {
       return;
     }
 
-    const { password, ...rest } = updateUser;
-
-    console.log(rest);
+    const { password: pass, refreshToken: refresh, ...rest } = updateUser;
 
     res.status(200).json({
       error: false,
@@ -49,11 +47,48 @@ export const updateUserProfile = async (req: Request, res: Response) => {
       rest,
     });
   } catch (error) {
-    console.log(error);
+    res.status(500).json({
+      message: "server error",
+    });
   }
 };
 
 // get user detail
+
+export const getUserDetail = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      res.status(400).json({
+        message: "id is require",
+      });
+      return;
+    }
+
+    const getUser = await User.findById(id);
+
+    if (!getUser) {
+      res.status(400).json({
+        message: "user is NOT found",
+      });
+      return;
+    }
+
+    const getUserDetail = getUser?.toObject();
+    const { password: pass, refreshToken: refresh, ...rest } = getUserDetail;
+
+    res.status(200).json({
+      message: "successfuly get user",
+      rest,
+    });
+  } catch (error) {
+    res.status(500).json({
+      messge: "something went wrong",
+    });
+    return;
+  }
+};
 
 // delete account
 
