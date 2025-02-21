@@ -1,97 +1,156 @@
 import { Request, Response } from "express";
 import User from "../models/User";
-import { generateToken } from "../utils/generateToken";
+import mongoose from "mongoose";
 
+// update profile
 
-export const signup = async (req: Request, res: Response): Promise<void> => {
-  console.log("user singing up started")
-  const { name,
-     email,
-     password, 
-     gender, 
-     dob, 
-     agree 
-    } = req.body;
-
-    console.log(name, email, password)
-
+export const updateUserProfile = async (req: Request, res: Response) => {
   try {
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-      res.status(400).json({ message: "User already exists" });
+    const { id } = req.params;
+    const { name, email } = req.body;
+
+    if (!id || !mongoose.isValidObjectId(id)) {
+      res.status(401).json({
+        message: "Invalid or missing user ID",
+      });
       return;
     }
 
-    const user = await User.create({
-      name,
-      email,
-      password,
-      gender,
-      dob,
-      agree,
-    });
- 
-    console.log(user)
-
-    res.status(201).json({ message: "User created successfully" });
-  } catch (error) {
-    console.log(error)
-    res.status(500).json({ message: "Server error" });
-  }
-};
-
-export const login = async (req: Request, res: Response): Promise<void> => {
-  const { email, password } = req.body;
-
-  try {
-    const user: any = await User.findOne({ email });
-    if (!user) {
-      res.status(400).json({ message: "Invalid email or password" });
+    if (!name && !email) {
+      res.status(400).json({
+        error: true,
+        message: "Either name or email is require to be changed",
+      });
       return;
     }
 
-    const isMatch = await user.matchPassword(password);
+    const update = await User.findByIdAndUpdate(
+      id,
+      { name, email },
+      { new: true }
+    );
 
-    if (!isMatch) {
-      res.status(400).json({ message: "Invalid email or password" });
+    if (!update) {
+      res.status(404).json({ error: true, message: "User not found" });
       return;
     }
 
-    const token = generateToken(user._id);
-    res.cookie("token", token, {
-      httpOnly: true,
-      // secure: process.env.NODE_ENV === "production", // Comment this out for development
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+    const updateUser = update?.toObject();
 
-    console.log("cookie created successfully with token:", token);
+    if (!updateUser) {
+      res.status(500).json({ error: true, message: "Failed to update user" });
+      return;
+    }
+
+    const { password: pass, refreshToken: refresh, ...rest } = updateUser;
+
     res.status(200).json({
-      message: "Login successful",
-      user: { name: user.name, email: user.email, isAdmin: user.isAdmin, token: token },
+      error: false,
+      msg: "successfully updated",
+      rest,
     });
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({
+      message: "Internal server error",
+    });
   }
 };
 
+// get user detail
 
-export const google = async (req: Request, res: Response): Promise<void> => {
-  const { name, email } = req.body;
-
+export const getUserDetail = async (req: Request, res: Response) => {
   try {
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-      res.status(400).json({ message: "User already exists" });
+    const { id } = req.params;
+
+    if (!id || !mongoose.isValidObjectId(id)) {
+      res.status(401).json({
+        message: "Invalid or missing user ID",
+      });
       return;
     }
 
-    const user = await User.create({ name, email });
-    const userData = user.toObject();
-    const { password: pass, ...rest } = userData;
+    const getUser = await User.findById(id);
 
-    res.status(201).json({ message: "User created successfully", rest });
+    if (!getUser) {
+      res.status(400).json({
+        message: "user is NOT found",
+      });
+      return;
+    }
+
+    const getUserDetail = getUser?.toObject();
+    const { password: pass, refreshToken: refresh, ...rest } = getUserDetail;
+
+    res.status(200).json({
+      message: "successfuly get user",
+      rest,
+    });
   } catch (error) {
-    res.status(500).json({ message: "Servererror" });
+    res.status(500).json({
+      message: "Internal server error",
+    });
+    return;
   }
 };
 
+// delete account
+export const deleteAccount = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    if (!id || !mongoose.isValidObjectId(id)) {
+      res.status(401).json({
+        message: "Invalid or missing user ID",
+      });
+      return;
+    }
+
+    const deleteUser = await User.findByIdAndDelete(id);
+
+    if (!deleteUser) {
+      res.status(400).json({
+        message: "user is not found",
+      });
+      return;
+    }
+
+    res.status(201).json({
+      message: "scessfully delete user account",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
+// get all user
+export const getAllUser = async (req: Request, res: Response) => {
+  try {
+    // Get page and limit from query parameters
+    const page = parseInt(req.query.page as string) || 1; // Default page = 1
+    const limit = parseInt(req.query.limit as string) || 10; // Default limit = 10
+    const skip = (page - 1) * limit;
+
+    // Fetch users with pagination and exclude sensitive fields
+    const users = await User.find()
+      .select("-password -refreshToken") // Remove password and refreshToken
+      .skip(skip) // Skip previous pages' users
+      .limit(limit); // Limit number of users per request
+
+    // Get total count for frontend pagination
+    const totalUsers = await User.countDocuments();
+
+    res.status(200).json({
+      success: true,
+      totalUsers,
+      totalPages: Math.ceil(totalUsers / limit),
+      currentPage: page,
+      users,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+    return;
+  }
+};

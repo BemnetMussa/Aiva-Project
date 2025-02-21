@@ -11,6 +11,7 @@ interface IUser extends Document {
   resetPasswordToken?: string;
   resetPasswordExpire?: Date;
   agree: boolean;
+  refreshToken?: string;
   matchPassword(enteredPassword: string): Promise<boolean>;
 }
 
@@ -42,9 +43,10 @@ const userSchema = new mongoose.Schema<IUser>(
     },
     gender: {
       type: String,
-      enum: ["male", "female", "other"],
-      default: "other",
+      enum: ["male", "female"],
+      required: true,
     },
+    refreshToken: { type: String },
     dob: {
       type: Date,
       required: true,
@@ -86,5 +88,7 @@ userSchema.methods.matchPassword = async function (enteredPassword: string) {
 };
 
 const User = mongoose.model("User", userSchema);
+
+export { IUser };
 
 export default User;

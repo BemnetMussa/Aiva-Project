@@ -27,18 +27,31 @@ const Navbar = () => {
             >
               Home
             </Link>
-            <Link
-              to="/favorites"
-              className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium  hover:border-b-4 hover:border-primary transition ease-out duration-500"
-            >
-              Favorites
-            </Link>
-            <Link
-              to="/accommodations"
-              className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium  hover:border-b-4 hover:border-primary transition ease-out duration-500"
-            >
-              Host Accommodations
-            </Link>
+            {isAuthenticated ? (
+              <>
+                <Link
+                  to="/favorites"
+                  className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium  hover:border-b-4 hover:border-primary transition ease-out duration-500"
+                >
+                  Favorites
+                </Link>
+                <Link
+                  to="/accommodations"
+                  className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium  hover:border-b-4 hover:border-primary transition ease-out duration-500"
+                >
+                  Host Accommodations
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/about-us"
+                  className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium  hover:border-b-4 hover:border-primary transition ease-out duration-500"
+                >
+                  About Us
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Right side icons */}
