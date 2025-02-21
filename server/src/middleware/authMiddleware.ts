@@ -30,3 +30,11 @@ export const protect = (
     res.status(401).json({ message: "Invalid token" });
   }
 };
+
+export const isAdmin = (req: any, res: Response, next: NextFunction) => {
+  if (req.user && req.user.role === "admin") {
+    next();
+  } else {
+    res.status(403).json({ message: "Not authorized as admin" });
+  }
+};

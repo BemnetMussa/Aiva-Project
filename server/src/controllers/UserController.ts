@@ -125,3 +125,32 @@ export const deleteAccount = async (req: Request, res: Response) => {
 };
 
 // get all user
+export const getAllUser = async (req: Request, res: Response) => {
+  try {
+    // Get page and limit from query parameters
+    const page = parseInt(req.query.page as string) || 1; // Default page = 1
+    const limit = parseInt(req.query.limit as string) || 10; // Default limit = 10
+    const skip = (page - 1) * limit;
+
+    // Fetch users with pagination and exclude sensitive fields
+    const users = await User.find()
+      .select("-password -refreshToken") // Remove password and refreshToken
+      .skip(skip) // Skip previous pages' users
+      .limit(limit); // Limit number of users per request
+
+    // Get total count for frontend pagination
+    const totalUsers = await User.countDocuments();
+
+    res.status(200).json({
+      success: true,
+      totalUsers,
+      totalPages: Math.ceil(totalUsers / limit),
+      currentPage: page,
+      users,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+    return;
+  }
+};
