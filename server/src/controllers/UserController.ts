@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import User from "../models/User";
+import mongoose from "mongoose";
 
 // update profile
 
@@ -8,8 +9,10 @@ export const updateUserProfile = async (req: Request, res: Response) => {
     const { id } = req.params;
     const { name, email } = req.body;
 
-    if (!id) {
-      res.status(400).json({ error: true, message: "id is require" });
+    if (!id || !mongoose.isValidObjectId(id)) {
+      res.status(401).json({
+        message: "Invalid or missing user ID",
+      });
       return;
     }
 
@@ -48,7 +51,7 @@ export const updateUserProfile = async (req: Request, res: Response) => {
     });
   } catch (error) {
     res.status(500).json({
-      message: "server error",
+      message: "Internal server error",
     });
   }
 };
@@ -59,9 +62,9 @@ export const getUserDetail = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
-    if (!id) {
-      res.status(400).json({
-        message: "id is require",
+    if (!id || !mongoose.isValidObjectId(id)) {
+      res.status(401).json({
+        message: "Invalid or missing user ID",
       });
       return;
     }
@@ -84,12 +87,41 @@ export const getUserDetail = async (req: Request, res: Response) => {
     });
   } catch (error) {
     res.status(500).json({
-      messge: "something went wrong",
+      message: "Internal server error",
     });
     return;
   }
 };
 
 // delete account
+export const deleteAccount = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    if (!id || !mongoose.isValidObjectId(id)) {
+      res.status(401).json({
+        message: "Invalid or missing user ID",
+      });
+      return;
+    }
+
+    const deleteUser = await User.findByIdAndDelete(id);
+
+    if (!deleteUser) {
+      res.status(400).json({
+        message: "user is not found",
+      });
+      return;
+    }
+
+    res.status(201).json({
+      message: "scessfully delete user account",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
 
 // get all user
