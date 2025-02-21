@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../redux/store";
-import { setChats, setActiveChat } from "../redux/Slice/chatSlice";
+import { RootState } from "../../redux/store";
+import { setChats, setActiveChat } from "../../redux/Slice/chatSlice";
 
 export default function ChatLists() {
   const dispatch = useDispatch();

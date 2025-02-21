@@ -30,6 +30,10 @@ export const createOrGetChat = async (
     res.status(200).json(chat);
   } catch (error) {
     console.log(error);
+    res.status(500).json({
+      message: "Internal server error",
+    });
+    return;
   }
 };
 
@@ -51,6 +55,10 @@ export const getUserChats = async (
     res.status(200).json(chats);
   } catch (error) {
     console.log(error);
+    res.status(500).json({
+      message: "Internal server error",
+    });
+    return;
   }
 };
 
@@ -74,5 +82,9 @@ export const deleteChat = async (
     res.status(200).json({ message: "Chat deleted successfully" });
   } catch (error) {
     console.log(error);
+    res.status(500).json({
+      message: "Internal server error",
+    });
+    return;
   }
 };

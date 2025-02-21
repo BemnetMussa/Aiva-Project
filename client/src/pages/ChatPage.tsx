@@ -1,5 +1,5 @@
-import { ChatNav } from "../components/ChatNav";
-import { ChatWindow } from "../components/ChatWindow";
+import { ChatNav } from "../components/ChatPageComponet/ChatNav";
+import { ChatWindow } from "../components/ChatPageComponet/ChatWindow";
 
 export default function ChatPage() {
   return (
