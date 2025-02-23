@@ -1,21 +1,22 @@
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  createCategory,
+  setActiveCategory,
+} from "../redux/slices/categorySlice";
 import PropertyCard from "../components/PropertyCard";
 import Navbar from "../components/Navbar";
-import { useState, useEffect } from "react";
+import { Plus } from "lucide-react";
 
-interface SubCategory {
-  name: string;
-  createdAt: Date;
-}
-
+// Define interfaces for Category, favorite, and Property
 interface Category {
   _id: string;
   name: string;
-  subCategories: SubCategory[];
   userId: string;
   createdAt: Date;
 }
 
-interface Property {
+export interface favoriteProperty {
   _id: string;
   title: string;
   location: string;
@@ -28,158 +29,108 @@ interface Property {
   status: string;
 }
 
+// Define RootState type for proper TypeScript support
+interface RootState {
+  categories: {
+    categories: Category[];
+    activeCategory: string;
+    wishlistCategory: Category | null;
+  };
+  favorites: {
+    favorites: favoriteProperty[];
+    status: string;
+    error: string | null;
+  };
+}
+
 export const FavoritesPage: React.FC = () => {
-  const [properties, setProperties] = useState<Property[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [activeCategory, setActiveCategory] = useState<string>("");
-  const [wishlistCategory, setWishlistCategory] = useState<Category | null>(
-    null
+  const dispatch = useDispatch();
+  const categories = useSelector(
+    (state: RootState) => state.categories.categories
+  );
+  const activeCategory = useSelector(
+    (state: RootState) => state.categories.activeCategory
+  );
+  const wishlistCategory = useSelector(
+    (state: RootState) => state.categories.wishlistCategory
   );
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Fetch categories
-        const categoriesResponse = await fetch(
-          "http://localhost:5000/api/categories",
-          {
-            method: "GET",
-            credentials: "include",
-          }
-        );
-        const categoriesData = await categoriesResponse.json();
-        setCategories(categoriesData);
+  const favorites = useSelector(
+    (state: RootState) => state.favorites.favorites
+  );
 
-        // Find or create wishlist category
-        let wishlist = categoriesData.find(
-          (category: Category) => category.name.toLowerCase() === "wishlist"
-        );
 
-        if (!wishlist) {
-          // Create wishlist category if it doesn't exist
-          const response = await fetch(
-            "http://localhost:5000/api/categories/create",
-            {
-              method: "POST",
-              credentials: "include",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ name: "Wishlist" }),
-            }
-          );
-          wishlist = await response.json();
-          setCategories([...categoriesData, wishlist]);
-        }
-
-        setWishlistCategory(wishlist);
-        setActiveCategory(wishlist._id);
-
-        // Fetch favorites
-        const favoritesResponse = await fetch(
-          "http://localhost:5000/api/favorites",
-          {
-            credentials: "include",
-          }
-        );
-        const favoritesData = await favoritesResponse.json();
-        setProperties(favoritesData);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  const addNewCategory = async (name: string) => {
-    try {
-      const response = await fetch(
-        "http://localhost:5000/api/categories/create",
-        {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ name }),
-        }
-      );
-      const newCategory = await response.json();
-      setCategories([...categories, newCategory]);
-    } catch (error) {
-      console.error("Error adding category:", error);
+  const handleCreateCategory = (name: string) => {
+    if (name.trim()) {
+      dispatch(createCategory(name) as any);
     }
   };
 
-  // Updated filtering logic
-  const filteredProperties = properties.filter((property) => {
+  const handleCategoryChange = (categoryId: string) => {
+    dispatch(setActiveCategory(categoryId) as any);
+  };
+
+  // Filter properties based on active category
+  const filteredProperties = favorites.filter((property) => {
     if (activeCategory === wishlistCategory?._id) {
-      return true; // Show all favorites in wishlist
-    } else {
-      return property.categoryId === activeCategory; // Show only properties matching the selected category
+      return true;
     }
+    return property.categoryId === activeCategory;
   });
 
   return (
-    <div className="flex relative overflow-hidden flex-col items-center h-[100vh] w-full pt-14 bg-[#f3f3f3] border border-cyan-400 border-solid shadow-[0px_3px_6px_rgba(18,15,40,0.12)]">
+    <div className="min-h-screen bg-[#f3f3f3]">
       <Navbar />
 
-      <div className="items-start p-8 absolute left-12 top-24 flex flex-col gap-4">
-        <div className="flex gap-8">
-          {categories.map((category) => (
-            <div key={category._id} className="flex flex-col gap-2">
-              <h2
-                className={`border-b-4 cursor-pointer font-bold ${
-                  activeCategory === category._id
-                    ? "border-black"
-                    : "border-transparent"
-                }`}
-                onClick={() => {
-                  setActiveCategory(category._id);
-                }}
+      <main className="container mx-auto px-4 pt-24">
+        {/* Categories Section */}
+        <div className="mb-8">
+          <div className="flex items-center gap-8 overflow-x-auto pb-2">
+            {categories.map((category) => (
+              <button
+                key={category._id}
+                onClick={() => handleCategoryChange(category._id)}
+                className={`
+                  whitespace-nowrap font-bold pb-2 transition-all
+                  ${
+                    activeCategory === category._id
+                      ? "border-b-4 border-black"
+                      : "border-b-4 border-transparent hover:border-gray-300"
+                  }
+                `}
               >
                 {category.name}
-              </h2>
-            </div>
-          ))}
-
-          <button
-            className="text-primary-color hover:text-blue-700 font-bold"
-            onClick={() => {
-              const name = prompt("Enter new category name:");
-              if (name) {
-                addNewCategory(name);
-              }
-            }}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="white"
-              className="size-8"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                fill="black"
-                d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-              />
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      <div className="p-20 items-center justify-center">
-        <div className="mt-24 mx-auto sm:w-full">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-10 gap-1">
-            {filteredProperties.map((property) => (
-              <PropertyCard key={property._id} {...property} />
+              </button>
             ))}
+
+            <button
+              onClick={() => {
+                const name = prompt("Enter new category name:");
+                if (name) handleCreateCategory(name);
+              }}
+              className="flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-200 transition-colors"
+              aria-label="Add new category"
+            >
+              <Plus className="w-5 h-5" />
+            </button>
           </div>
         </div>
-      </div>
+
+        {/* Properties Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          {filteredProperties.map((property) => (
+            <PropertyCard key={property._id} {...property} />
+          ))}
+
+          {filteredProperties.length === 0 && (
+            <div className="col-span-full text-center py-12 text-gray-500">
+              No properties found in this category.
+            </div>
+          )}
+        </div>
+      </main>
     </div>
   );
 };
+
+export default FavoritesPage;

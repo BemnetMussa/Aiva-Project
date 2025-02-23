@@ -103,6 +103,7 @@ export const addProperty = async (
       return;
     }
 
+    console.log(userId, "isssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss")
     const property = await Property.create({
       userId,
       title,
@@ -117,8 +118,10 @@ export const addProperty = async (
       status,
       image: imageName,
     });
+    console.log(property)
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    console.log(error)
+    res.status(500).json({ message: "Server error", error });
   }
 };
 

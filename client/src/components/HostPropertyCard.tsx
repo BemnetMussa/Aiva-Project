@@ -162,25 +162,7 @@ const HostPropertyCard = ({
             </p>
           </div>
 
-          {/* Favorite Button */}
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              onFavoritesClick?.(_id);
-            }}
-            className="absolute top-2 right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center"
-          >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              className="text-blue-400"
-            >
-              <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
-            </svg>
-          </button>
+         
 
           {/* Property Type Badge */}
           <div className="absolute bottom-2 left-2 font-semibold bg-[#D0D5D8] px-2 py-1 rounded-full text-xs">

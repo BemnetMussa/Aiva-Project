@@ -13,12 +13,6 @@ const propertySchema = new mongoose.Schema({
     trim: true,
   },
 
-  location: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-
   price: {
     type: Number,
     required: true,
@@ -40,8 +34,9 @@ const propertySchema = new mongoose.Schema({
   },
   categoryId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "UserCategory",
+    ref: "Category",
     required: true,
+    default: new mongoose.Types.ObjectId("67a8ed58dc46d08c99b3ac0e"), 
   },
 
   description: {

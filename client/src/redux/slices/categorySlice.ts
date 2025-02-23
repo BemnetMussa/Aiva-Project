@@ -37,10 +37,10 @@ export const fetchCategories = createAsyncThunk(
     if (!response.ok) {
       throw new Error("Failed to fetch categories");
     }
-
     return await response.json();
   }
 );
+
 
 // Async thunk for creating a new category
 export const createCategory = createAsyncThunk(
@@ -57,14 +57,13 @@ export const createCategory = createAsyncThunk(
         body: JSON.stringify({ name }),
       }
     );
-
     if (!response.ok) {
       throw new Error("Failed to create category");
     }
-
     return await response.json();
   }
 );
+
 
 const categorySlice = createSlice({
   name: "categories",

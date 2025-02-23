@@ -3,6 +3,7 @@ import Favorites from "../models/Favorites";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import Property from "../models/Property";
+import Category from "../models/UserCategory";
 
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import {
@@ -11,7 +12,6 @@ import {
   GetObjectCommand,
   S3LocationFilterSensitiveLog,
 } from "@aws-sdk/client-s3";
-
 
 dotenv.config();
 
@@ -28,7 +28,10 @@ const s3 = new S3Client({
   region: bucketRegion || "",
 });
 
-export const userFavorites = async (req: Request, res: Response): Promise<void> => {
+export const userFavorites = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const userId = (req as any).user?.id;
 
@@ -39,7 +42,9 @@ export const userFavorites = async (req: Request, res: Response): Promise<void> 
     const propertyIds = favoritesId.map((favorite) => favorite.propertyId);
 
     // fetching the object form the properties
-    const properties = await Property.find({ _id: { $in: propertyIds } }).lean();
+    const properties = await Property.find({
+      _id: { $in: propertyIds },
+    }).lean();
 
     // Generate signed URLs in parallel
     if (properties.length > 0) {
@@ -71,7 +76,6 @@ export const userFavorites = async (req: Request, res: Response): Promise<void> 
         })
       );
 
-      console.log("Final properties with images:", propertiesWithImages);
       res.status(200).json(propertiesWithImages);
     } else {
       console.log("No properties found for the given IDs");
@@ -88,33 +92,61 @@ export const userFavorites = async (req: Request, res: Response): Promise<void> 
 
 
 
-
-// userId, propertyId
-// like from the user i will need the userId and also the Poerpty that have he clikced
-
-// then i will response with the valid it will be udpated for that property
-
-export const addFavorites = async (
+export const addToFavorites = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
+    const { propertyId, categoryId } = req.body;
     const userId = (req as any).user?.id;
-    const propertyId = req.body._id;
 
-    if (!userId || !propertyId) {
-      res.status(400).json({ message: "Try again, an error occurred" });
+    // Check if the property is already favorited by the user
+    const existingFavorite = await Favorites.findOne({ userId, propertyId });
+    if (existingFavorite) {
+      res.status(400).json({ message: "Property already in favorites." });
+      return; // Ensures function ends here without returning a value
+    }
+
+    // Find the category name using the categoryId
+    const category = await Category.findById(categoryId);
+    if (!category) {
+      res.status(404).json({ message: "Category not found." });
       return;
     }
 
-    const favorites = await Favorites.create({
+    // Find the property and update its categoryId
+    const updatedProperty = await Property.findByIdAndUpdate(
+      propertyId,
+      { categoryId: category._id },
+      { new: true, lean: true }
+    );
+
+    if (!updatedProperty) {
+      res.status(404).json({ message: "Property not found." });
+      return;
+    }
+
+    console.log("updating this one", updatedProperty);
+
+    // Create and save the new favorite
+    const newFavorite = new Favorites({
       userId,
       propertyId,
+      categoryId,
+      categoryName: category.name,
     });
 
-    res.status(200).json({ message: "Property added successfully", favorites });
+    await newFavorite.save();
+    res.status(201).json({
+      message: "Added to favorites successfully!",
+      favorite: newFavorite,
+      property: updatedProperty,
+    });
   } catch (error) {
-    console.error("Error adding property:", error);
-    res.status(500).json({ message: "Server error" });
+    console.error("Error adding to favorites:", error);
+    res.status(500).json({ message: "Server error. Please try again later." });
   }
 };
+
+
+

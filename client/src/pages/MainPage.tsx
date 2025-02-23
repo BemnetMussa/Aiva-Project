@@ -4,10 +4,14 @@ import SearchForm from "../components/SearchForm";
 import { Pagination } from "../components/Pagination";
 import { SearchFormData } from "../components/types";
 import Navbar from "../components/Navbar";
-import { Link, Navigate } from "react-router-dom";
 import Footer from "../components/Footer";
 import { useState, useEffect } from "react";
-import { LogIn } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { fetchCategories } from "../redux/slices/categorySlice";
+import { fetchFavorites } from "../redux/slices/favoriteSlice";
+import { addFavorite } from "../redux/slices/favoriteSlice";
+import { useAppDispatch } from "../redux/hooks";
+
 
 interface Property {
   _id: string;
@@ -32,6 +36,7 @@ export const ZimanyHome: React.FC = () => {
   };
 
   const [properties, setProperties] = useState<Property[]>([]);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     const fetchProperties = async () => {
@@ -40,7 +45,6 @@ export const ZimanyHome: React.FC = () => {
           method: "GET",
           credentials: "include",
         });
-        console.log(response.json);
         const data = await response.json();
         setProperties(data);
       } catch (error) {
@@ -48,39 +52,33 @@ export const ZimanyHome: React.FC = () => {
       }
     };
 
+    dispatch(fetchCategories() as any);
+    dispatch(fetchFavorites() as any);
     fetchProperties();
-  }, []);
+  }, [dispatch]);
 
-  const handleFavoritesClick: (propertyId: string) => Promise<void> = async (
-    propertyId
-  ) => {
-    try {
-     
-      const response = await fetch("http://localhost:5000/api/favorites/add", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ propertyId }), // Send the property ID to the backend
-      });
 
-      if (response.ok) {
-        console.log("Property added to favorites successfully!");
-      } else {
-        console.error("Failed to add property to favorites.");
+
+    const handleAddFavoriteClick = async (
+      propertyId: string,
+      categoryId: string
+    ) => {
+      try {
+        await dispatch(addFavorite({ propertyId, categoryId })).unwrap();
+        // After successful addition, refresh favorites
+        dispatch(fetchFavorites() as any);
+      } catch (error) {
+        console.error("Error adding favorite:", error);
       }
-    } catch (error) {
-      console.error("Error adding property to favorites:", error);
-    }
-  };
+    };
+  
 
   return (
     <div className="flex overflow-hidden flex-col items-center w-full pt-14 bg-white border border-cyan-400 border-solid shadow-[0px_3px_6px_rgba(18,15,40,0.12)]">
       {/* Navbar section */}
       <Navbar />
 
-      <div className="flex relative flex-col h-[75vh] items-center self-stretch px-20 pt-28 pb-40 w-full  text-center text-white max-md:px-5 max-md:py-24 max-md:max-w-full">
+      {/* <div className="flex relative flex-col h-[75vh] items-center self-stretch px-20 pt-28 pb-40 w-full text-center text-white max-md:px-5 max-md:py-24 max-md:max-w-full">
         <img
           loading="lazy"
           src="\welcom_image.png"
@@ -99,17 +97,17 @@ export const ZimanyHome: React.FC = () => {
             world.
           </p>
         </div>
-      </div>
+      </div> */}
 
       <SearchForm />
-      <div className=" flex items-center justify-center">
-        <div className="mt-24 mx-auto sm:w-full ">
+      <div className="flex items-center justify-center">
+        <div className="mt-24 mx-auto sm:w-full">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-10 gap-1">
             {properties.map((property) => (
               <PropertyCard
                 key={property._id}
                 {...property}
-                onFavoritesClick={(id) => handleFavoritesClick(id)}
+                onFavoritesClick={handleAddFavoriteClick} // Pass the function directly
               />
             ))}
           </div>
