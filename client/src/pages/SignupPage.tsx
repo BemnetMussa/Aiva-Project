@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import GoogleAuth from "../components/GoogleAuth";
 import { useDispatch } from "react-redux";
-import { loginFailed, loginSuccess } from "../redux/Slice/authSlice";
+import { loginFailed, loginSuccess } from "../redux/slices/authSlice";
 
 const SignupPage: React.FC = () => {
   const dispatch = useDispatch();
@@ -171,7 +171,6 @@ const SignupPage: React.FC = () => {
           </form>
         </div>
       </div>
-      
     </div>
   );
 };

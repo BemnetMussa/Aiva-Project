@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import Favorites from "../models/Favorites";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import Property from "../models/property";
+import Property from "../models/Property";
 
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import {

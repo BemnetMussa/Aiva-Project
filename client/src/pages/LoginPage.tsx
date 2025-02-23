@@ -3,13 +3,13 @@ import { Link, Navigate, redirect } from "react-router-dom";
 import { EyeOff } from "lucide-react";
 import GoogleAuth from "../components/GoogleAuth";
 import { useDispatch } from "react-redux";
-import { loginFailed, loginSuccess } from "../redux/Slice/authSlice";
+import { loginFailed, loginSuccess } from "../redux/slices/authSlice";
 
 const LoginPage: React.FC = () => {
   const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [redirect, setRedirect] = useState(false)
+  const [redirect, setRedirect] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,9 +29,9 @@ const LoginPage: React.FC = () => {
     const data = await response.json();
 
     if (response.ok) {
-      console.log(response)
+      console.log(response);
       dispatch(loginSuccess({ user: data.user, token: data.token }));
-      setRedirect(true)
+      setRedirect(true);
     } else {
       dispatch(loginFailed({ error: data.error }));
     }
@@ -99,7 +99,8 @@ const LoginPage: React.FC = () => {
 
             <button
               className="bg-primary-color px-12 py-3 rounded-xl w-full mt-5 justify-center text-white"
-              type="submit" onClick={handleSubmit}
+              type="submit"
+              onClick={handleSubmit}
             >
               Login
             </button>
