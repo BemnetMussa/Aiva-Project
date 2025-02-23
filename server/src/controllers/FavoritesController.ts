@@ -13,6 +13,7 @@ import {
   S3LocationFilterSensitiveLog,
 } from "@aws-sdk/client-s3";
 
+
 dotenv.config();
 
 const bucketName = process.env.BUCKET_NAME;
@@ -89,7 +90,6 @@ export const userFavorites = async (
     });
   }
 };
-
 
 
 export const addToFavorites = async (

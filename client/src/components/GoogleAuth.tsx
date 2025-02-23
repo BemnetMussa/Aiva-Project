@@ -19,10 +19,14 @@ const GoogleAuth = () => {
     if (responseFromGoogle) {
       navigator("http://localhost:5173/");
     }
+
+    const firebaseToken = await responseFromGoogle.user.getIdToken(); //firebase token
+
     const response = await fetch("http://localhost:5000/api/users/google", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${firebaseToken}`, // 🔹 Send Firebase Token
       },
       body: JSON.stringify({
         name: responseFromGoogle.user.displayName,

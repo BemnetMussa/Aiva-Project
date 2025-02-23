@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
+import { verifyToken } from "../utils/generateToken";
 
 interface UserPayload {
   id: string;
@@ -12,7 +12,7 @@ export const protect = (
   next: NextFunction
 ): void => {
   const token = req.cookies?.token;
-  console.log("user token", token)
+  console.log("user token", token);
 
   if (!token) {
     res.status(401).json({ message: "Not authorized, no token" });
@@ -20,13 +20,21 @@ export const protect = (
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as UserPayload;
-    
+    const decoded = verifyToken(token) as UserPayload;
+
     (req as any).user = decoded;
-    console.log("decoded ", decoded)
+    console.log("decoded ", decoded);
     next();
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(401).json({ message: "Invalid token" });
+  }
+};
+
+export const isAdmin = (req: any, res: Response, next: NextFunction) => {
+  if (req.user && req.user.role === "admin") {
+    next();
+  } else {
+    res.status(403).json({ message: "Not authorized as admin" });
   }
 };
