@@ -118,7 +118,7 @@ const AddPropertyPage: React.FC<AddPropertyFormProps> = ({
 
   return (
     <div
-      className="fixed inset-0 flex justify-center items-start z-50 w-full bg-[#f3f3f3] overflow-y-auto p-6"
+      className="fixed inset-0 flex justify-center md:h-[1100px] pt-24 z-2 h-full  bg-[#f3f3f3] overflow-y-auto"
       onClick={handleBackgroundClick}
     >
       <div className="w-full sm:mx-10 xl:mx-0 xl:w-8/12 bg-white rounded-xl shadow-xl">

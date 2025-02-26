@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { verifyToken } from "../utils/generateToken";
+import { decode } from "punycode";
 
 interface UserPayload {
   id: string;
@@ -11,19 +12,18 @@ export const protect = (
   res: Response,
   next: NextFunction
 ): void => {
-  const token = req.cookies?.token;
-  console.log("user token", token);
+  const token = req.cookies?.refreshToken;
 
   if (!token) {
     res.status(401).json({ message: "Not authorized, no token" });
     return;
   }
 
-  try {
+  try { 
     const decoded = verifyToken(token) as UserPayload;
-
-    (req as any).user = decoded;
     console.log("decoded ", decoded);
+    (req as any).user = decoded;
+
     next();
   } catch (error) {
     console.log(error);
@@ -38,4 +38,3 @@ export const isAdmin = (req: any, res: Response, next: NextFunction) => {
     res.status(403).json({ message: "Not authorized as admin" });
   }
 };
-  

@@ -2,8 +2,11 @@ import { EyeOff } from "lucide-react";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import GoogleAuth from "../components/GoogleAuth";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { loginFailed, loginSuccess } from "../redux/slices/authSlice";
+import { Bounce, ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 
 const SignupPage: React.FC = () => {
   const dispatch = useDispatch();
@@ -13,6 +16,8 @@ const SignupPage: React.FC = () => {
   const [dob, setDob] = useState("");
   const [gender, setGender] = useState("");
   const [agree, setAgree] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,7 +30,7 @@ const SignupPage: React.FC = () => {
       body: JSON.stringify({
         name,
         email,
-        password,
+        password, 
         dob,
         gender,
         agree,
@@ -36,8 +41,16 @@ const SignupPage: React.FC = () => {
 
     if (response.ok) {
       dispatch(loginSuccess({ token: data.token, user: data.user }));
+      toast.success("Account successfully created! Redirecting...");
+
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
+
     } else {
-      dispatch(loginFailed({ error: data.error }));
+      dispatch(loginFailed({ error: data.message }));
+      console.log(data.message);
+      toast.error(data.message || "An error occurred. Please try again."); // Show the error message
     }
   };
 
@@ -64,7 +77,6 @@ const SignupPage: React.FC = () => {
           <h1 className="mt-4 font-semibold">Signup with your email address</h1>
 
           {/* email form */}
-
           <form
             className="flex flex-col items-start gap-4 justify-center h-full mt-4 w-full text-sm"
             onSubmit={handleSubmit}
@@ -171,6 +183,19 @@ const SignupPage: React.FC = () => {
           </form>
         </div>
       </div>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Bounce}
+      />
     </div>
   );
 };

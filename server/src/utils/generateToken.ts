@@ -7,11 +7,14 @@ export const generateToken = async (
 ): Promise<string> => {
   const option: SignOptions = { expiresIn };
 
-  return jwt.sign(
+  const token = jwt.sign(
     { id: user._id, email: user.email, isAdmin: user.isAdmin },
     process.env.JWT_SECRET!,
     option
   );
+
+  console.log("Generated Token: ", token);
+  return token;
 };
 
 export const generateAccessToken = (user: IUser) => generateToken(user, "15m");
@@ -19,8 +22,12 @@ export const generateRefreshToken = (user: IUser) => generateToken(user, "7d");
 
 export const verifyToken = (token: string) => {
   try {
-    return jwt.verify(token, process.env.JWT_SECRET as string);
+    const value = jwt.verify(token, process.env.JWT_SECRET as string);
+    console.log("Verified Token Value: ", value);
+    return value;
   } catch (error) {
+    console.error("Token verification failed: ", error);
     return null;
   }
 };
+

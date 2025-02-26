@@ -134,7 +134,7 @@ export const markMessagesAsRead = createAsyncThunk(
       const res = await fetch(`/api/message/read`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ chatId, userId }),
+        body: JSON.stringify({ chatId, userId }),j
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);

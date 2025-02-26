@@ -38,6 +38,7 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
 
     const accessToken = await generateAccessToken(user);
     const refreshToken = await generateRefreshToken(user);
+    console.log(accessToken, refreshToken);
 
     user.refreshToken = refreshToken;
     await user.save();
@@ -63,9 +64,19 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
       message: "User created successfully",
       rest,
     });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Server error" });
+  } catch (error: any) {
+    console.error(error);
+    let errorMessage = "An unexpected error occurred. Please try again later.";
+    if (error.errors) {
+      if (error.errors.dob) {
+        errorMessage = error.errors.dob.message;
+      } else if (error.errors.password) {
+        errorMessage = error.errors.password.message;
+      }
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+    res.status(500).json({ message: errorMessage });
   }
 };
 

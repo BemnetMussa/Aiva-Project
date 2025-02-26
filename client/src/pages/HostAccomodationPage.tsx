@@ -1,11 +1,9 @@
 import PropertyCard from "../components/PropertyCard";
 import Navbar from "../components/Navbar";
-import { useState, useEffect, lazy } from "react";
+import { useState, useEffect } from "react";
 import HostPropertyCard from "../components/HostPropertyCard";
-import { Plus, X } from "lucide-react";
-import { Navigate } from "react-router-dom";
+import { Plus } from "lucide-react";
 import AddPropertyForm from "./AddPropertyPage";
-
 
 interface Property {
   _id: string;
@@ -34,7 +32,6 @@ export const HostAccommodation: React.FC = () => {
             credentials: "include",
           }
         );
-        console.log(response.json);
         const data = await response.json();
         setProperties(data);
       } catch (error) {
@@ -50,7 +47,7 @@ export const HostAccommodation: React.FC = () => {
   };
 
   return (
-    <div className="flex relative overflow-hidden flex-col items-center h-full w-full pt-14 bg-[#f3f3f3] border border-cyan-400 border-solid shadow-[0px_3px_6px_rgba(18,15,40,0.12)]">
+    <div className="flex relative overflow-hidden flex-col items-center pt-14 bg-[#f3f3f3] h-[100vh] z-0">
       {/* Navbar section */}
       <Navbar />
 
@@ -76,16 +73,18 @@ export const HostAccommodation: React.FC = () => {
         />
       )}
 
-      {/* Post Property Button */}
-      <button
-        className="w-20 h-20 z-10 flex items-center justify-center 
-        rounded-full bg-primary-color hover:bg-blue-600 
-        text-white shadow-lg transition duration-200 
-        fixed bottom-10 right-20 -z-0"
-        onClick={handleAddingProperty}
-      >
-        <Plus size={40} strokeWidth={2.5} />
-      </button>
+      {/* Conditionally render the Post Property Button based on the modal*/}
+      {!isAddingProperty && (
+        <button
+          className="w-20 h-20 flex items-center justify-center 
+          rounded-full bg-primary-color hover:bg-blue-600 
+          text-white shadow-lg transition duration-200 
+          fixed bottom-10 right-20"
+          onClick={handleAddingProperty}
+        >
+          <Plus size={40} strokeWidth={2.5} />
+        </button>
+      )}
     </div>
   );
 };
