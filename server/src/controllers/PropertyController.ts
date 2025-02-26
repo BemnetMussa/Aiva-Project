@@ -103,7 +103,6 @@ export const addProperty = async (
       return;
     }
 
-    console.log(userId, "isssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss")
     const property = await Property.create({
       userId,
       title,

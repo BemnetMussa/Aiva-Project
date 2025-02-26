@@ -3,7 +3,7 @@ import categoryReducer from './slices/categorySlice';
 import { authReducer } from './slices/authSlice';
 import persistStore from 'redux-persist/es/persistStore';
 import favoriteReducer from "./slices/favoriteSlice"
-import { chatReducer } from "./slice/chatSlice";
+import chatReducer from './slices/chatSlice'
 
 
 export const store = configureStore({

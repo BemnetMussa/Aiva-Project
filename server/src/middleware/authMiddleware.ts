@@ -38,3 +38,4 @@ export const isAdmin = (req: any, res: Response, next: NextFunction) => {
     res.status(403).json({ message: "Not authorized as admin" });
   }
 };
+  

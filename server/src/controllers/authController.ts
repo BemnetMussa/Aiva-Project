@@ -265,7 +265,7 @@ export const google = async (req: Request, res: Response): Promise<void> => {
 
     res.status(201).json({ message: "User created successfully", rest });
   } catch (error) {
-    res.status(500).json({ message: "Servererror" });
+    res.status(500).json({ message: "Server error" });
     return;
   }
 };

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setMessages } from "../../redux/Slice/chatSlice";
+import { setMessages } from "../../redux/slices/chatSlice";
 import io from "socket.io-client";
 
 const socket = io("http://localhost:5000");

@@ -71,10 +71,12 @@ app.use("/api/categories", categoryRoute);
 app.use("/api/chat", chatRoute);
 app.use("/api/message", messageRoute);
 app.use("/api/user", userRouter);
+app.use("/api/users", authRoutes);
 
 // Start server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, async () => {
+server.listen(PORT, async () => {
   console.log(`Server running on http://localhost:${PORT}`);
   await connectDB();
 });
+

@@ -57,11 +57,12 @@ export const createCategory = async (
       res.status(400).json({ message: "Category name already exists" });
       return;
     }
+    
 
     const category = await Category.create({
       name: req.body.name,
       userId: userId,
-    });
+      });
 
     res.status(201).json(category);
   } catch (error: any) {

@@ -175,6 +175,7 @@ const chatSlice = createSlice({
       // Handle successful chat creation or retrieval
       .addCase(createOrGetChat.fulfilled, (state, action) => {
         state.chats = [...state.chats, action.payload]; // Add the new chat to the list
+        state.loading = false;
       })
       // Handle successful message send
       .addCase(sendMessage.fulfilled, (state, action) => {
@@ -194,9 +195,6 @@ const chatSlice = createSlice({
       .addCase(createOrGetChat.pending, (state) => {
         state.loading = true;
       })
-      .addCase(createOrGetChat.fulfilled, (state) => {
-        state.loading = false;
-      })
       .addCase(createOrGetChat.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string; // Store error message
@@ -204,5 +202,5 @@ const chatSlice = createSlice({
   },
 });
 
-export const { setChats, setMessages, addMessage, setActiveChat } =
-  chatSlice.actions;
+export const { setChats, setMessages, addMessage, setActiveChat } = chatSlice.actions;
+export default chatSlice.reducer;

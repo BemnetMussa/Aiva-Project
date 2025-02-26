@@ -1,8 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
-import { setChats, setActiveChat } from "../../redux/Slice/chatSlice";
-
+import { setChats, setActiveChat } from "../../redux/slices/chatSlice"
 export default function ChatLists() {
   const dispatch = useDispatch();
   const chats = useSelector((state: RootState) => state.chat.chats);
@@ -27,6 +26,7 @@ export default function ChatLists() {
             <img
               src={chat._id === user._id ? user.image : "../public/logo.png"}
               className="w-12 h-12 rounded-full"
+              alt=""
             />
             <span className="text-sm font-medium">
               {chat.user1._id === user._id ? chat.user2.name : chat.user1.name}
@@ -38,3 +38,4 @@ export default function ChatLists() {
     </div>
   );
 }
+
