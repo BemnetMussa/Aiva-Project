@@ -10,7 +10,6 @@ interface AuthRequest extends Request {
   };
 }
 
-
 interface ICategory {
   _id: string;
   name: string;
@@ -37,8 +36,6 @@ export const getCategories = async (
   }
 };
 
-
-
 // Create new category
 export const createCategory = async (
   req: AuthRequest,
@@ -47,22 +44,20 @@ export const createCategory = async (
   try {
     const userId = (req as any).user?.id; // Get the user ID from the token
 
-    console.log("userId", req.user?._id);
     const existingCategory = await Category.findOne({
       name: req.body.name,
-      userId: userId
+      userId: userId,
     });
 
     if (existingCategory) {
       res.status(400).json({ message: "Category name already exists" });
       return;
     }
-    
 
     const category = await Category.create({
       name: req.body.name,
       userId: userId,
-      });
+    });
 
     res.status(201).json(category);
   } catch (error: any) {
@@ -72,28 +67,35 @@ export const createCategory = async (
   }
 };
 
-// // Delete category
-// export const deleteCategory = async (req, res) => {
-//   try {
-//     const category = await Category.findOne({
-//       _id: req.params.id,
-//       userId: req.user._id,
-//     });
+// Delete category
+export const deleteCategory = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const categoryId = req.query.id;
+    const userId = (req as any).user.id;
 
-//     if (!category) {
-//       return res.status(404).json({ message: "Category not found" });
-//     }
+    const category = await Category.findOne({
+      _id: categoryId,
+      userId: userId,
+    });
 
-//     await Property.updateMany(
-//       { categoryId: req.params.id },
-//       { $unset: { categoryId: "", subCategoryName: "" } }
-//     );
+    if (!category) {
+      res.status(404).json({ message: "Category not found" });
+      return;
+    }
 
-//     await Category.deleteOne({ _id: req.params.id });
-//     res.json({ message: "Category deleted successfully" });
-//   } catch (error) {
-//     res
-//       .status(500)
-//       .json({ message: "Error deleting category", error: error.message });
-//   }
-// };
+    await Property.updateMany(
+      { categoryId: categoryId },
+      { $unset: { categoryId: "", subCategoryName: "" } }
+    );
+
+    await Category.deleteOne({ _id: categoryId });
+    res.status(202).json({ message: "Category deleted successfully" });
+  } catch (error: any) {
+    res
+      .status(500)
+      .json({ message: "Error deleting category", error: error.message });
+  }
+};

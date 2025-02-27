@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 
-
 export interface Category {
   _id: string;
   name: string;
@@ -16,7 +15,7 @@ interface CategoryState {
   error: string | null;
 }
 
-// setting the initial state for react redux   
+// setting the initial state for react redux
 const initialState: CategoryState = {
   categories: [],
   activeCategory: "",
@@ -25,7 +24,7 @@ const initialState: CategoryState = {
   error: null,
 };
 
-// Async thunk for fetching categories from the backend 
+// Async thunk for fetching categories from the backend
 export const fetchCategories = createAsyncThunk(
   "categories/fetchCategories",
   async () => {
@@ -40,7 +39,6 @@ export const fetchCategories = createAsyncThunk(
     return await response.json();
   }
 );
-
 
 // Async thunk for creating a new category
 export const createCategory = createAsyncThunk(
@@ -64,6 +62,28 @@ export const createCategory = createAsyncThunk(
   }
 );
 
+// remove category
+export const deleteCategory = createAsyncThunk(
+  "categories/deleteCategory",
+
+  async (categoryId: string) => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/categories/delete/?id=${categoryId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+
+      if (response) {
+        
+      }
+    } catch (error) {
+      console.error("Error deleting a category:", error);
+    }
+  }
+);
 
 const categorySlice = createSlice({
   name: "categories",

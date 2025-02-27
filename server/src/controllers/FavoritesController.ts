@@ -147,6 +147,3 @@ export const addToFavorites = async (
     res.status(500).json({ message: "Server error. Please try again later." });
   }
 };
-
-
-

@@ -6,6 +6,7 @@ import {
   PutObjectCommand,
   GetObjectCommand,
   S3LocationFilterSensitiveLog,
+  DeleteObjectCommand,
 } from "@aws-sdk/client-s3";
 // import sharp from "sharp";
 // // wrap the req.file.buffer by the sharp and recrate the buffer which allows us to resize the image
@@ -20,7 +21,7 @@ dotenv.config();
 const bucketName = process.env.BUCKET_NAME;
 const bucketRegion = process.env.BUCKET_REGION;
 const secretAccesskey = process.env.SECRET_ACCESS_KEY;
-const accessKey = process.env.ACCESS_KEY; 
+const accessKey = process.env.ACCESS_KEY;
 
 const s3 = new S3Client({
   credentials: {
@@ -117,9 +118,9 @@ export const addProperty = async (
       status,
       image: imageName,
     });
-    console.log(property)
+    console.log(property);
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).json({ message: "Server error", error });
   }
 };
@@ -147,5 +148,36 @@ export const userProperty = async (
   } catch (error) {
     console.error("Error fetching user properties:", error);
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const removeProperty = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const propertyId = req.query.id;
+    const property = await Property.findById(propertyId);
+
+    if (!property) {
+      res.status(404).json({ message: "Property not found" });
+      return;
+    }
+
+    const deleteParams = {
+      Bucket: bucketName,
+      Key: property.image,
+    };
+
+    await s3.send(new DeleteObjectCommand(deleteParams));
+
+    await Property.deleteOne({ _id: propertyId });
+
+    res.status(202).json({ message: "Property deleted successfully" });
+  } catch (error: any) {
+    console.error("Error deleting property:", error);
+    res
+      .status(500)
+      .json({ message: "Error deleting property", error: error.message });
   }
 };

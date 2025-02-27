@@ -74,7 +74,7 @@ export const ZimanyHome: React.FC = () => {
   
 
   return (
-    <div className="flex overflow-hidden flex-col items-center w-full pt-14 bg-white border border-cyan-400 border-solid shadow-[0px_3px_6px_rgba(18,15,40,0.12)]">
+    <div className="flex overflow-hidden flex-col items-center w-full pt-14 bg-white border">
       {/* Navbar section */}
       <Navbar />
 
@@ -102,7 +102,7 @@ export const ZimanyHome: React.FC = () => {
       <SearchForm />
       <div className="flex items-center justify-center">
         <div className="mt-24 mx-auto sm:w-full">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-10 gap-1">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 md:gap-10 gap-1">
             {properties.map((property) => (
               <PropertyCard
                 key={property._id}

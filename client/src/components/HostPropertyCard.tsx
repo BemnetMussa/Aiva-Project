@@ -69,14 +69,14 @@ const HostPropertyCard = ({
   const handleRemoveListing = async (propertyId: string) => {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/properties/delete",
+        `http://localhost:5000/api/properties/delete/?id=${propertyId}`,
         {
           method: "DELETE",
           credentials: "include",
           headers: {
             "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ propertyId }),
+          }
+          
         }
       );
 
@@ -146,7 +146,7 @@ const HostPropertyCard = ({
             }`}
           ></div>
           <p className="font-medium">
-            {status === "Available" ? "Listed" : "Delisted"}
+            {status === "Available" ? "Active" : "Inactive"}
           </p>
         </div>
 
