@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Star,
   MapPin,
@@ -6,6 +6,7 @@ import {
   Bath,
   Home,
   Edit,
+  Power,
   Trash2,
 } from "lucide-react";
 
@@ -41,8 +42,21 @@ const HostPropertyCard = ({
   onFavoritesClick,
 }: PropertyCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [propertyStatus, setPropertyStatus] = useState(status);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  const handleListing = async (propertyId: string) => {
+  // Initialize status when component loads
+  useEffect(() => {
+    setPropertyStatus(status);
+  }, [status]);
+
+  const togglePropertyStatus = async (propertyId: string) => {
+    const newStatus =
+      propertyStatus === "Available" ? "Unavailable" : "Available";
+
+    setIsUpdating(true);
+
     try {
       const response = await fetch(
         "http://localhost:5000/api/properties/update",
@@ -52,17 +66,25 @@ const HostPropertyCard = ({
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ propertyId }),
+          body: JSON.stringify({
+            propertyId,
+            status: newStatus,
+          }),
         }
       );
 
       if (response.ok) {
-        console.log("Property Updated successfully!");
+        console.log("Property status updated successfully!");
+        setPropertyStatus(newStatus);
       } else {
-        console.error("Failed to update try again later.");
+        console.error(
+          "Failed to update property status. Please try again later."
+        );
       }
     } catch (error) {
-      console.error("Error occur trying to update property:", error);
+      console.error("Error occurred trying to update property:", error);
+    } finally {
+      setIsUpdating(false);
     }
   };
 
@@ -75,18 +97,19 @@ const HostPropertyCard = ({
           credentials: "include",
           headers: {
             "Content-Type": "application/json",
-          }
-          
+          },
         }
       );
 
       if (response.ok) {
-        console.log("Property Updated successfully!");
+        console.log("Property removed successfully!");
+        setShowDeleteConfirm(false);
+        
       } else {
-        console.error("Failed to update try again later.");
+        console.error("Failed to remove property. Please try again later.");
       }
     } catch (error) {
-      console.error("Error occur trying to update property:", error);
+      console.error("Error occurred trying to remove property:", error);
     }
   };
 
@@ -105,12 +128,12 @@ const HostPropertyCard = ({
       );
 
       if (response.ok) {
-        console.log("Property Updated successfully!");
+        console.log("Property edit mode activated!");
       } else {
-        console.error("Failed to update try again later.");
+        console.error("Failed to enter edit mode. Please try again later.");
       }
     } catch (error) {
-      console.error("Error occur trying to update property:", error);
+      console.error("Error occurred trying to edit property:", error);
     }
   };
 
@@ -137,16 +160,16 @@ const HostPropertyCard = ({
         {/* Status Badge */}
         <div
           className={`absolute top-4 left-4 px-3 py-1.5 text-white rounded-full text-xs font-semibold flex gap-1.5 items-center ${
-            status === "Available" ? "bg-green-500" : "bg-gray-500"
+            propertyStatus === "Available" ? "bg-green-500" : "bg-gray-500"
           }`}
         >
           <div
             className={`w-2 h-2 rounded-full ${
-              status === "Available" ? "bg-green-200" : "bg-gray-300"
+              propertyStatus === "Available" ? "bg-green-200" : "bg-gray-300"
             }`}
           ></div>
           <p className="font-medium">
-            {status === "Available" ? "Active" : "Inactive"}
+            {propertyStatus === "Available" ? "Active" : "Inactive"}
           </p>
         </div>
 
@@ -177,13 +200,11 @@ const HostPropertyCard = ({
               </span>
             </div>
           </div>
-
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-1">
               <MapPin className="w-4 h-4 text-gray-400 flex-shrink-0" />
               <p className="text-gray-500 text-sm line-clamp-1">{location}</p>
             </div>
-
             {/* Price Section */}
             <div className="flex items-center bg-blue-50 px-3 py-1 rounded-lg">
               <p className="text-lg font-semibold">${price.toLocaleString()}</p>
@@ -232,19 +253,50 @@ const HostPropertyCard = ({
         </div>
 
         {/* Host Buttons */}
-        <div className="flex flex-col gap-2 font-semibold text-xl">
+        <div className="flex flex-col gap-4 font-semibold text-lg">
+          {/* Toggle Status Button */}
           <button
-            className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-300"
-            onClick={() => handleListing(_id)}
+            className={`w-full py-3 flex items-center justify-center gap-2 rounded-md transition-all duration-300 shadow-md ${
+              propertyStatus === "Available"
+                ? "bg-amber-500 hover:bg-amber-600 text-white"
+                : "bg-green-500 hover:bg-green-600 text-white"
+            }`}
+            onClick={() => togglePropertyStatus(_id)}
+            disabled={isUpdating}
           >
-            List / Delist
+            <Power className="w-5 h-5" />
+            {isUpdating
+              ? "Updating..."
+              : propertyStatus === "Available"
+                ? "Deactivate Listing"
+                : "Activate Listing"}
           </button>
-          <button
-            className="w-full py-3 bg-red-500 text-white rounded-lg hover:bg-red-700 transition-colors duration-300"
-            onClick={() => handleRemoveListing(_id)}
-          >
-            Remove Property
-          </button>
+
+          {/* Remove Property Button with Confirmation */}
+          {showDeleteConfirm ? (
+            <div className="flex gap-2">
+              <button
+                className="flex-1 py-3 bg-red-500 text-white rounded-md hover:bg-red-600 transition-all duration-300"
+                onClick={() => handleRemoveListing(_id)}
+              >
+                Confirm
+              </button>
+              <button
+                className="flex-1 py-3 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-all duration-300"
+                onClick={() => setShowDeleteConfirm(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          ) : (
+            <button
+              className="w-full py-3 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-all duration-300 flex items-center justify-center gap-2"
+              onClick={() => setShowDeleteConfirm(true)}
+            >
+              <Trash2 className="w-5 h-5" />
+              Remove Property
+            </button>
+          )}
         </div>
       </div>
     </div>

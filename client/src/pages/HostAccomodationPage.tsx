@@ -22,23 +22,23 @@ export const HostAccommodation: React.FC = () => {
   const [properties, setProperties] = useState<Property[]>([]);
   const [isAddingProperty, setIsAddingProperty] = useState(false);
 
-  useEffect(() => {
-    const fetchProperties = async () => {
-      try {
-        const response = await fetch(
-          "http://localhost:5000/api/properties/fetchProperty",
-          {
-            method: "GET",
-            credentials: "include",
-          }
-        );
-        const data = await response.json();
-        setProperties(data);
-      } catch (error) {
-        console.error("Error fetching properties:", error);
-      }
-    };
+  const fetchProperties = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/properties/fetchProperty",
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      const data = await response.json();
+      setProperties(data);
+    } catch (error) {
+      console.error("Error fetching properties:", error);
+    }
+  };
 
+  useEffect(() => {
     fetchProperties();
   }, []);
 
@@ -74,15 +74,18 @@ export const HostAccommodation: React.FC = () => {
       )}
 
       {/* Conditionally render the Post Property Button based on the modal*/}
+
       {!isAddingProperty && (
         <button
-          className="w-20 h-20 flex items-center justify-center 
-          rounded-full bg-primary-color hover:bg-blue-600 
-          text-white shadow-lg transition duration-200 
-          fixed bottom-10 right-20"
+          className="fixed top-24 right-8 px-4 py-2 flex items-center gap-2
+          bg-blue-500 hover:bg-blue-700 text-white font-medium
+          rounded-md shadow-md transition-all duration-200 ease-in-out
+          hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           onClick={handleAddingProperty}
+     
         >
-          <Plus size={40} strokeWidth={2.5} />
+          <Plus size={18} strokeWidth={2} />
+          <span>Post Property</span>
         </button>
       )}
     </div>
