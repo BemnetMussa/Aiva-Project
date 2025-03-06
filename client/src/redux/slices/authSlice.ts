@@ -13,7 +13,8 @@ const initialState: AuthState = {
   token: localStorage.getItem("token") || null,
   user: null,
   error: null,
-  isAuthenticated: !!localStorage.getItem("token"),
+
+  isAuthenticated: !localStorage.getItem("token"),
 };
 
 const authSlice = createSlice({

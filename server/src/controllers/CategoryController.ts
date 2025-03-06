@@ -1,7 +1,7 @@
 // controllers/CategoryController.ts
 import { Request, Response } from "express";
 import Category from "../models/UserCategory";
-import Property from "../models/Property";
+import Property from "../models/property";
 
 // Extend Request type to include user
 interface AuthRequest extends Request {

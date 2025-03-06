@@ -17,12 +17,14 @@ const GoogleAuth = () => {
 
     const responseFromGoogle = await signInWithPopup(auth, provider);
     if (responseFromGoogle) {
-      navigator("http://localhost:5173/");
+      console.log("good to go");
     }
 
-    const firebaseToken = await responseFromGoogle.user.getIdToken(); //firebase token
+    let firebaseToken = await responseFromGoogle.user.getIdToken(true); // 🔹 Ensure fresh token
 
-    const response = await fetch("http://localhost:5000/api/users/google", {
+    console.log("Firebase Token:", firebaseToken);
+
+    let response = await fetch("http://localhost:5000/api/auth/google", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -35,10 +37,29 @@ const GoogleAuth = () => {
       credentials: "include",
     });
 
+    if (response.status === 401) {
+      // 🔹 Token expired, retry login
+      console.log("Token expired, retrying login...");
+      let newToken = await responseFromGoogle.user.getIdToken(true);
+      response = await fetch("http://localhost:5000/api/auth/google", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${newToken}`,
+        },
+        body: JSON.stringify({
+          name: responseFromGoogle.user.displayName,
+          email: responseFromGoogle.user.email,
+        }),
+        credentials: "include",
+      });
+    }
+
     const data = await response.json();
 
     if (response.ok) {
       dispatch(loginSuccess({ user: data.user, token: data.token }));
+      navigator("/");
     }
     dispatch(loginFailed({ error: data.error }));
   };

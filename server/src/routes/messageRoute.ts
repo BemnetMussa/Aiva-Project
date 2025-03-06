@@ -3,7 +3,7 @@ import {
   getChatMessages,
   markMessagesAsRead,
   sendMessage,
-} from "../controllers/messageController";
+} from "../controllers/MessageController";
 
 const router = express.Router();
 

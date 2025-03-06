@@ -24,9 +24,17 @@ const App = () => {
           <Route path="/earnings" element={<div>Earnings Page</div>} />
           <Route path="/favorites" element={<FavoritesPage />} />
           <Route path="/chat" element={<ChatPage />} />
-          <Route path="/addproperty" element={<AddPropertyPage isOpen={false} onClose={function (): void {
-            throw new Error("Function not implemented.");
-          } } />} />
+          <Route
+            path="/addproperty"
+            element={
+              <AddPropertyPage
+                isOpen={false}
+                onClose={function (): void {
+                  throw new Error("Function not implemented.");
+                }}
+              />
+            }
+          />
           <Route path="/property-detail" element={<DetailPropertyPage />} />
         </Route>
       </Routes>

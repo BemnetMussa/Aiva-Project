@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, Navigate, redirect } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { EyeOff } from "lucide-react";
 import GoogleAuth from "../components/GoogleAuth";
 import { useDispatch } from "react-redux";
@@ -10,11 +10,13 @@ const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [redirect, setRedirect] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
 
-    const response = await fetch("http://localhost:5000/api/users/login", {
+    const response = await fetch("http://localhost:5000/api/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -102,7 +104,7 @@ const LoginPage: React.FC = () => {
               type="submit"
               onClick={handleSubmit}
             >
-              Login
+              {loading ? <span>loading</span> : <p>login</p>}
             </button>
           </form>
         </div>

@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import Favorites from "../models/Favorites";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import Property from "../models/Property";
+import Property from "../models/property";
 import Category from "../models/UserCategory";
 
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
@@ -12,7 +12,6 @@ import {
   GetObjectCommand,
   S3LocationFilterSensitiveLog,
 } from "@aws-sdk/client-s3";
-
 
 dotenv.config();
 
@@ -90,7 +89,6 @@ export const userFavorites = async (
     });
   }
 };
-
 
 export const addToFavorites = async (
   req: Request,

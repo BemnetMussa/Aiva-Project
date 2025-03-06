@@ -22,7 +22,7 @@ const SignupPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const response = await fetch("http://localhost:5000/api/users/signup", {
+    const response = await fetch("http://localhost:5000/api/auth/signup", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -30,7 +30,7 @@ const SignupPage: React.FC = () => {
       body: JSON.stringify({
         name,
         email,
-        password, 
+        password,
         dob,
         gender,
         agree,
@@ -39,6 +39,8 @@ const SignupPage: React.FC = () => {
 
     const data = await response.json();
 
+    console.log(data);
+
     if (response.ok) {
       dispatch(loginSuccess({ token: data.token, user: data.user }));
       toast.success("Account successfully created! Redirecting...");
@@ -46,7 +48,6 @@ const SignupPage: React.FC = () => {
       setTimeout(() => {
         navigate("/");
       }, 2000);
-
     } else {
       dispatch(loginFailed({ error: data.message }));
       console.log(data.message);

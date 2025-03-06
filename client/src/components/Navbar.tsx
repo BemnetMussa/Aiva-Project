@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Bell, User, MessageCircle } from "lucide-react";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
+import DropdownButton from "../components/Dropdown";
 
 const Navbar = () => {
   const isAuthenticated = useSelector(
@@ -63,9 +64,9 @@ const Navbar = () => {
               <button className="p-2 text-gray-600 hover:text-gray-900 rounded-full hover:bg-gray-100">
                 <Bell className="w-5 h-5" />
               </button>
-              <button className="p-2 text-gray-600 hover:text-gray-900 rounded-full hover:bg-gray-100">
-                <User className="w-5 h-5" />
-              </button>
+              <div className="p-2 text-gray-600 hover:text-gray-900 rounded-full hover:bg-gray-100">
+                <DropdownButton />
+              </div>
             </div>
           ) : (
             <div className="flex gap-4">
