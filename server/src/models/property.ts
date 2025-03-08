@@ -13,6 +13,12 @@ const propertySchema = new mongoose.Schema({
     trim: true,
   },
 
+  location: {
+    type: String,
+    required: true,
+    trim: true
+  },
+
   price: {
     type: Number,
     required: true,
