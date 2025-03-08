@@ -6,23 +6,26 @@ const socket = io("http://localhost:5000"); // Connect to the backend socket
 // Define types
 interface Chat {
   _id: string;
-  user1: { _id: string; name: string; email: string };
-  user2: { _id: string; name: string; email: string };
+  user1: { _id: string; name: string; email: string; image: string };
+  user2: { _id: string; name: string; email: string; image: string };
   lastMessage?: { content: string };
+  createdAt: string;
 }
+
+type MessageType = "text" | "file" | "image" | "video" | "audio";
 
 interface Message {
   _id: string;
   chatId: string;
   sender: string;
   content: string;
-  messageType: "text" | "image" | "video" | "audio" | "file";
+  messageType: MessageType;
   createdAt: string;
 }
 
 interface ChatState {
   chats: Chat[];
-  messages: Message[];
+  messages: { [chatId: string]: Message[] };
   activeChat: string | null;
   error: string | null;
   loading: boolean;
@@ -50,25 +53,25 @@ export const createOrGetChat = createAsyncThunk(
   }
 );
 
-// Delete a chat
-export const deleteChat = createAsyncThunk(
-  "chat/deleteChat",
-  async (chatId, { rejectWithValue }) => {
-    try {
-      const response = await fetch(`/api/chat/delete-chat/${chatId}`, {
-        method: "DELETE",
-      });
+// Thunk to Delete a chat
+export const deleteChat = createAsyncThunk<
+  { chatId: string },
+  string,
+  { rejectValue: string }
+>("chat/deleteChat", async (chatId, { rejectWithValue }) => {
+  try {
+    const response = await fetch(`/api/chat/delete-chat/${chatId}`, {
+      method: "DELETE",
+    });
 
-      const data = await response.json();
-      if (!response.ok)
-        throw new Error(data.message || "Failed to delete chat");
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Failed to delete chat");
 
-      return { chatId };
-    } catch (error: any) {
-      return rejectWithValue(error.message);
-    }
+    return { chatId };
+  } catch (error: any) {
+    return rejectWithValue(error.message);
   }
-);
+});
 
 // Thunk to get all chats for a user
 export const getUserChats = createAsyncThunk(
@@ -85,6 +88,7 @@ export const getUserChats = createAsyncThunk(
   }
 );
 
+// Thunk to send message
 export const sendMessage = createAsyncThunk(
   "chat/sendMessage",
   async (
@@ -110,6 +114,7 @@ export const sendMessage = createAsyncThunk(
   }
 );
 
+// Thunk to getchatMessages
 export const getChatMessages = createAsyncThunk(
   "chat/getChatMessages",
   async (chatId: string, { rejectWithValue }) => {
@@ -124,6 +129,7 @@ export const getChatMessages = createAsyncThunk(
   }
 );
 
+// Thunk to markMessagesAsRead
 export const markMessagesAsRead = createAsyncThunk(
   "chat/markMessagesAsRead",
   async (
@@ -134,7 +140,7 @@ export const markMessagesAsRead = createAsyncThunk(
       const res = await fetch(`/api/message/read`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ chatId, userId }),j
+        body: JSON.stringify({ chatId, userId }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
@@ -147,7 +153,7 @@ export const markMessagesAsRead = createAsyncThunk(
 
 const initialState: ChatState = {
   chats: [],
-  messages: [],
+  messages: {},
   activeChat: null,
   error: null,
   loading: false,
@@ -160,12 +166,21 @@ const chatSlice = createSlice({
     setChats: (state, action: PayloadAction<Chat[]>) => {
       state.chats = action.payload;
     },
-    setMessages: (state, action: PayloadAction<Message[]>) => {
-      state.messages = action.payload;
+    setMessages: (
+      state,
+      action: PayloadAction<{ chatId: string; messages: Message[] }>
+    ) => {
+      state.messages[action.payload.chatId] = action.payload.messages;
     },
+
     addMessage: (state, action: PayloadAction<Message>) => {
-      state.messages.push(action.payload);
+      const { chatId } = action.payload;
+      if (!state.messages[chatId]) {
+        state.messages[chatId] = [];
+      }
+      state.messages[chatId].push(action.payload);
     },
+
     setActiveChat: (state, action: PayloadAction<string | null>) => {
       state.activeChat = action.payload;
     },
@@ -174,14 +189,21 @@ const chatSlice = createSlice({
     builder
       // Handle successful chat creation or retrieval
       .addCase(createOrGetChat.fulfilled, (state, action) => {
-        state.chats = [...state.chats, action.payload]; // Add the new chat to the list
+        const existingChat = state.chats.find(
+          (chat) => chat._id === action.payload._id
+        );
+        if (!existingChat) {
+          state.chats.push(action.payload);
+        }
         state.loading = false;
       })
       // Handle successful message send
       .addCase(sendMessage.fulfilled, (state, action) => {
-        if (state.activeChat) {
-          state.messages.push(action.payload); // Add the new message to the current chat
+        const { chatId } = action.payload;
+        if (!state.messages[chatId]) {
+          state.messages[chatId] = [];
         }
+        state.messages[chatId].push(action.payload); // Add the new message to the current chat
       })
       // Handle fetching user chats
       .addCase(getUserChats.fulfilled, (state, action) => {
@@ -189,7 +211,14 @@ const chatSlice = createSlice({
       })
       // Handle fetching messages for a chat
       .addCase(getChatMessages.fulfilled, (state, action) => {
-        state.messages = action.payload; // Update messages for the active chat
+        state.messages[action.meta.arg] = action.payload; // Update messages for the active chat
+      })
+      .addCase(deleteChat.fulfilled, (state, action) => {
+        if (!action.payload?.chatId) return; // Ensure payload exists
+        state.chats = state.chats.filter(
+          (chat) => chat._id !== action.payload.chatId
+        );
+        delete state.messages[action.payload.chatId];
       })
       // Handle setting the loading state
       .addCase(createOrGetChat.pending, (state) => {
@@ -202,5 +231,8 @@ const chatSlice = createSlice({
   },
 });
 
-export const { setChats, setMessages, addMessage, setActiveChat } = chatSlice.actions;
+export const { setChats, setMessages, addMessage, setActiveChat } =
+  chatSlice.actions;
+export type { Message, Chat };
+
 export default chatSlice.reducer;

@@ -19,9 +19,6 @@ export const ChatNav = () => {
         <div className="w-full  flex flex-col justify-center gap-2">
           <h2 className="text-lg font-semibold mb-4">Friends</h2>
           <ChatLists />
-          <ChatLists />
-          <ChatLists />
-          <ChatLists />
         </div>
       </div>
 

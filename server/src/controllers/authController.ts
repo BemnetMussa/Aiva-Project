@@ -132,9 +132,25 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 };
 
 // logout funtion
-export const logout = (req: Request, res: Response) => {
-  res.clearCookie("accessToken");
-  res.clearCookie("refreshToken");
+export const logout = async (req: Request, res: Response) => {
+  const userId = (req as any).user?.id;
+
+  await User.findByIdAndUpdate(userId, { refreshToken: null });
+
+  res.cookie("accessToken", "", {
+    httpOnly: true,
+    // secure: process.env.NODE_ENV === "production",
+    // sameSite: "Strict",
+    expires: new Date(0),
+  });
+
+  res.cookie("refreshToken", "", {
+    httpOnly: true,
+    // secure: process.env.NODE_ENV === "production",
+    // sameSite: "Strict",
+    expires: new Date(0),
+  });
+
   res.status(200).json({ message: "Logged out successfully" });
 };
 

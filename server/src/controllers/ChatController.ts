@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import Chat from "../models/Chat";
 import Message from "../models/Message";
+import mongoose from "mongoose";
 
 // Create or retrieve a chat between two users
 
@@ -45,11 +46,16 @@ export const getUserChats = async (
   try {
     const userId: string = req.params.userId;
 
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      res.status(400).json({ message: "Invalid chat ID format" });
+      return;
+    }
+
     const chats = await Chat.find({
       $or: [{ user1: userId }, { user2: userId }],
     })
-      .populate("user1", "name email")
-      .populate("user2", "name email")
+      .populate("user1", "name email image")
+      .populate("user2", "name email image")
       .populate("lastMessage");
 
     res.status(200).json(chats);
@@ -69,6 +75,10 @@ export const deleteChat = async (
 ): Promise<void> => {
   try {
     const { chatId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(chatId)) {
+      res.status(400).json({ message: "Invalid chat ID format" });
+      return;
+    }
 
     const chat = await Chat.findByIdAndDelete(chatId);
 

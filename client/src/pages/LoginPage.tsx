@@ -32,7 +32,8 @@ const LoginPage: React.FC = () => {
 
     if (response.ok) {
       console.log(response);
-      dispatch(loginSuccess({ user: data.user, token: data.token }));
+      dispatch(loginSuccess({ user: data.user }));
+      console.log(data);
       setRedirect(true);
     } else {
       dispatch(loginFailed({ error: data.error }));

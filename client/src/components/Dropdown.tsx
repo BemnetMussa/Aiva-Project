@@ -17,9 +17,21 @@ const DropdownButton = () => {
     setIsOpen(false);
   };
 
-  const handleLogOut = () => {
-    dispatch(logout());
-    navigate("/");
+  const handleLogOut = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/logout", {
+        method: "POST",
+        credentials: "include", // ✅ Important to remove both accessToken & refreshToken!
+      });
+
+      if (response) {
+        dispatch(logout()); // ✅ Clears Redux state
+        navigate("/");
+        return;
+      }
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
   return (
