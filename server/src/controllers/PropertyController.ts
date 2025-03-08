@@ -15,6 +15,7 @@ import dotenv from "dotenv";
 import crypto from "crypto";
 
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { error } from "console";
 
 dotenv.config();
 
@@ -97,9 +98,13 @@ export const addProperty = async (
   } = req.body;
 
   const userId = (req as any).user?.id; // Get the user ID from the token
+  
+  
+
+  const formattedPrice = price.replace(/,/g, "")
 
   try {
-    if (!userId) {
+    if (!userId) {  
       res.status(400).json({ message: "Try again, an error occurred" });
       return;
     }
@@ -108,7 +113,7 @@ export const addProperty = async (
       userId,
       title,
       location,
-      price,
+      price: formattedPrice.trim(),
       bedrooms,
       bathrooms,
       squareFeet,
@@ -119,6 +124,7 @@ export const addProperty = async (
       image: imageName,
     });
     console.log(property);
+    res.status(202).json({message: "property added successfully"})
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Server error", error });
@@ -181,3 +187,24 @@ export const removeProperty = async (
       .json({ message: "Error deleting property", error: error.message });
   }
 };
+
+export const switchPropertyState = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const propertyId = req.query.id;
+    const propertyStatus = req.query.status;
+
+    // updated value
+    let updatedValue = propertyStatus == "Unavailable" ? "Available" : "Unavailable"
+
+    await Property.updateOne({_id: propertyId }, { status: updatedValue });
+
+    res.status(202).json({message: "Property updated successfully"})
+  } catch (error: any) {
+    
+    console.error("Error switching status property", error)
+    res.status(500).json({message: "Error deleting property", error: error.message})
+  }
+}

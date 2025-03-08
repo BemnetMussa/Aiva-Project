@@ -3,7 +3,8 @@ import {
   addProperty,
   fetchProperties,
   userProperty,
-  removeProperty
+  removeProperty,
+  switchPropertyState
 } from "../controllers/PropertyController";
 import { protect } from "../middleware/authMiddleware";
 
@@ -13,5 +14,6 @@ router.post("/add", protect, addProperty);
 router.get("/", fetchProperties);
 router.get("/fetchProperty", protect, userProperty);
 router.delete("/delete", protect, removeProperty)
+router.put("/update", protect, switchPropertyState)
 
 export default router;

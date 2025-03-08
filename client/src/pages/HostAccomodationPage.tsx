@@ -5,6 +5,7 @@ import HostPropertyCard from "../components/HostPropertyCard";
 import { Plus } from "lucide-react";
 import AddPropertyForm from "./AddPropertyPage";
 
+
 interface Property {
   _id: string;
   title: string;
@@ -47,7 +48,7 @@ export const HostAccommodation: React.FC = () => {
   };
 
   return (
-    <div className="flex relative overflow-hidden flex-col items-center pt-14 bg-[#f3f3f3] h-[100vh] z-0">
+    <div className="flex overflow-hidden flex-col items-center w-full pt-14 bg-[#f3f3f3] h-[100vh]">
       {/* Navbar section */}
       <Navbar />
 
@@ -82,7 +83,6 @@ export const HostAccommodation: React.FC = () => {
           rounded-md shadow-md transition-all duration-200 ease-in-out
           hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           onClick={handleAddingProperty}
-     
         >
           <Plus size={18} strokeWidth={2} />
           <span>Post Property</span>
