@@ -26,6 +26,7 @@ bedrooms: number;
   image?: string;
   onFavoritesClick?: (id: string) => void;
   onPropertyUpdated?: () => void; // Add this callback for refreshing property list
+  onPropertyRemove: () => void;
 }
 
 const HostPropertyCard = ({
@@ -43,6 +44,7 @@ const HostPropertyCard = ({
   image,
   onFavoritesClick,
   onPropertyUpdated,
+  onPropertyRemove
 }: PropertyCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [propertyStatus, setPropertyStatus] = useState(status);
@@ -108,6 +110,7 @@ const HostPropertyCard = ({
 
       if (response.ok) {
         console.log("Property removed successfully!");
+        onPropertyRemove();
         setShowDeleteConfirm(false);
         if (onPropertyUpdated) onPropertyUpdated(); // Call the callback if provided
       } else {

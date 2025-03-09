@@ -5,7 +5,7 @@ import ImageUpload from "../components/ImageUploaderDragAndDrop";
 interface AddPropertyFormProps {
   isOpen: boolean;
   onClose: () => void;
-  onPropertyAdded: () => void;
+  onPropertyAdded: (value: string) => void;
 }
 
 interface PropertyFormData {
@@ -76,7 +76,7 @@ const AddPropertyPage: React.FC<AddPropertyFormProps> = ({
 
       if (response.ok) {
         console.log("Property added successfully");
-        onPropertyAdded();
+        onPropertyAdded("add");
         onClose();
       } else {
         console.error("Failed to add property");

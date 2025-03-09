@@ -48,25 +48,30 @@ export const HostAccommodation: React.FC = () => {
     setIsAddingProperty(true);
   };
 
-  const handlePropertyAdded = () => {
-    // Close the form
-    setIsAddingProperty(false);
+ const handlePropertyAction = (actionType: string) => {
+   // Close the form
+   setIsAddingProperty(false);
 
-    // Show success notification with react-toastify
-    toast.success("Property added successfully!", {
-      position: "top-right",
-      autoClose: 3500,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      transition: Bounce,
-    });
+   // Show appropriate success notification
+   const actionMessage =
+     actionType === "add"
+       ? "Property added successfully!"
+       : "Property removed successfully!";
 
-    // Refresh the property list
-    fetchProperties();
-  };
+   toast.success(actionMessage, {
+     position: "top-right",
+     autoClose: 3500,
+     hideProgressBar: false,
+     closeOnClick: true,
+     pauseOnHover: true,
+     draggable: true,
+     progress: undefined,
+     transition: Bounce,
+   });
+
+   // Refresh the property list
+   fetchProperties();
+ };
 
   return (
     <div className="flex overflow-hidden flex-col items-center w-full pt-14 bg-[#f3f3f3] h-[100%]">
@@ -84,7 +89,8 @@ export const HostAccommodation: React.FC = () => {
         <div className="mt-24 mx-auto sm:w-full ">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-10 gap-1">
             {properties.map((property) => (
-              <HostPropertyCard key={property._id} {...property} />
+              <HostPropertyCard key={property._id} {...property}
+               onPropertyRemove={() => handlePropertyAction("")} />
             ))}
           </div>
         </div>
@@ -95,7 +101,8 @@ export const HostAccommodation: React.FC = () => {
         <AddPropertyForm
           isOpen={isAddingProperty}
           onClose={() => setIsAddingProperty(false)}
-          onPropertyAdded={handlePropertyAdded}
+          /* will be corrected unnecessary */
+          onPropertyAdded={(value: string) => handlePropertyAction(value)}
         />
       )}
 
