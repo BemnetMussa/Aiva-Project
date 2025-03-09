@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import HostPropertyCard from "../components/HostPropertyCard";
 import { Plus } from "lucide-react";
 import AddPropertyForm from "./AddPropertyPage";
+import { Bounce, ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // Don't forget to import the CSS
 
 interface Property {
   _id: string;
@@ -22,23 +24,23 @@ export const HostAccommodation: React.FC = () => {
   const [properties, setProperties] = useState<Property[]>([]);
   const [isAddingProperty, setIsAddingProperty] = useState(false);
 
-  useEffect(() => {
-    const fetchProperties = async () => {
-      try {
-        const response = await fetch(
-          "http://localhost:5000/api/properties/fetchProperty",
-          {
-            method: "GET",
-            credentials: "include",
-          }
-        );
-        const data = await response.json();
-        setProperties(data);
-      } catch (error) {
-        console.error("Error fetching properties:", error);
-      }
-    };
+  const fetchProperties = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/properties/fetchProperty",
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      const data = await response.json();
+      setProperties(data);
+    } catch (error) {
+      console.error("Error fetching properties:", error);
+    }
+  };
 
+  useEffect(() => {
     fetchProperties();
   }, []);
 
@@ -46,10 +48,38 @@ export const HostAccommodation: React.FC = () => {
     setIsAddingProperty(true);
   };
 
+ const handlePropertyAction = (actionType: string) => {
+   // Close the form
+   setIsAddingProperty(false);
+
+   // Show appropriate success notification
+   const actionMessage =
+     actionType === "add"
+       ? "Property added successfully!"
+       : "Property removed successfully!";
+
+   toast.success(actionMessage, {
+     position: "top-right",
+     autoClose: 3500,
+     hideProgressBar: false,
+     closeOnClick: true,
+     pauseOnHover: true,
+     draggable: true,
+     progress: undefined,
+     transition: Bounce,
+   });
+
+   // Refresh the property list
+   fetchProperties();
+ };
+
   return (
-    <div className="flex relative overflow-hidden flex-col items-center pt-14 bg-[#f3f3f3] h-[100vh] z-0">
+    <div className="flex overflow-hidden flex-col items-center w-full pt-14 bg-[#f3f3f3] h-[100%]">
       {/* Navbar section */}
       <Navbar />
+
+      {/* Toast Container for notifications */}
+      <ToastContainer />
 
       <div className="items-start p-8 absolute left-12 top-24">
         <h2 className="border-b-4 border-black font-bold">Hosted Bookings</h2>
@@ -59,7 +89,8 @@ export const HostAccommodation: React.FC = () => {
         <div className="mt-24 mx-auto sm:w-full ">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-10 gap-1">
             {properties.map((property) => (
-              <HostPropertyCard key={property._id} {...property} />
+              <HostPropertyCard key={property._id} {...property}
+               onPropertyRemove={() => handlePropertyAction("")} />
             ))}
           </div>
         </div>
@@ -70,19 +101,23 @@ export const HostAccommodation: React.FC = () => {
         <AddPropertyForm
           isOpen={isAddingProperty}
           onClose={() => setIsAddingProperty(false)}
+          /* will be corrected unnecessary */
+          onPropertyAdded={(value: string) => handlePropertyAction(value)}
         />
       )}
 
       {/* Conditionally render the Post Property Button based on the modal*/}
+
       {!isAddingProperty && (
         <button
-          className="w-20 h-20 flex items-center justify-center 
-          rounded-full bg-primary-color hover:bg-blue-600 
-          text-white shadow-lg transition duration-200 
-          fixed bottom-10 right-20"
+          className="fixed top-24 right-8 px-4 py-2 flex items-center gap-2
+          bg-blue-500 hover:bg-blue-700 text-white font-medium
+          rounded-md shadow-md transition-all duration-200 ease-in-out
+          hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           onClick={handleAddingProperty}
         >
-          <Plus size={40} strokeWidth={2.5} />
+          <Plus size={18} strokeWidth={2} />
+          <span>Post Property</span>
         </button>
       )}
     </div>
