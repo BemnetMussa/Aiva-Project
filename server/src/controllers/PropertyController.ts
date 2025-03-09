@@ -191,11 +191,25 @@ export const fetchProperty = async (
   res: Response
 ): Promise<void> => {
   try {
-
     const propertyId = req.params.id;
-    const property = await Property.findOne({ _id: propertyId })
- 
-    res.status(200).json(property);
+    const userProperty = await Property.findOne({ _id: propertyId });
+
+    if (userProperty) {
+      userProperty.image = await getSignedUrl(
+        s3,
+        new GetObjectCommand({
+          Bucket: bucketName,
+          Key: userProperty.image,
+        }),
+        { expiresIn: 60 } // 60 seconds
+      );
+
+      res.status(200).json(userProperty);
+      
+    } else {
+      res.status(404).json({ message: "Property not found" });
+    }
+
   } catch (error) {
     console.error("Error fetching user property:", error);
     res.status(500).json({ message: "Server error" });
@@ -207,18 +221,25 @@ export const switchPropertyState = async (
   res: Response
 ): Promise<void> => {
   try {
-    const {propertyId, status: propertyStatus} = req.body;
+    const { propertyId, status: propertyStatus } = req.body;
 
-
-    console.log(propertyStatus, "property", propertyId)
+    console.log(propertyStatus, "property", propertyId);
     // updated value
-    let updatedValue = propertyStatus === "Unavailable" ? "Available" : "Unavailable";
+    let updatedValue =
+      propertyStatus === "Unavailable" ? "Available" : "Unavailable";
 
-    const updatedProperty = await Property.updateOne({ _id: propertyId }, { status: updatedValue });
+    const updatedProperty = await Property.updateOne(
+      { _id: propertyId },
+      { status: updatedValue }
+    );
     console.log(updatedProperty.modifiedCount, "modified");
 
-
-    res.status(202).json({ message: "Property updated successfully", updated: updateProperty});
+    res
+      .status(202)
+      .json({
+        message: "Property updated successfully",
+        updated: updateProperty,
+      });
   } catch (error: any) {
     console.error("Error switching status property", error);
     res
@@ -231,7 +252,7 @@ export const updateProperty = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const propertyId  = req.params.id;
+  const propertyId = req.params.id;
   const userId = (req as any).user?.id; // Get the user ID from the token
 
   try {
@@ -239,11 +260,9 @@ export const updateProperty = async (
     const existingProperty = await Property.findOne({ _id: propertyId });
 
     if (!existingProperty) {
-      res
-        .status(404)
-        .json({
-          message: "Property not found or you don't have permission to edit it",
-        });
+      res.status(404).json({
+        message: "Property not found or you don't have permission to edit it",
+      });
       return;
     }
 
@@ -300,23 +319,23 @@ export const updateProperty = async (
       }
     }
 
-    const updatedProperty = await Property.findByIdAndUpdate(propertyId, {
-      title: title || existingProperty.title,
-      location: location || existingProperty.location,
-      price: formattedPrice || existingProperty.price,
-      bedrooms: bedrooms || existingProperty.bedrooms,
-      bathrooms: bathrooms || existingProperty.bathrooms,
-      squareFeet: squareFeet || existingProperty.squareFeet,
-      phoneNumber: phoneNumber || existingProperty.phoneNumber,
-      description: description || existingProperty.description,
-      type: type || existingProperty.type,
-      status: status || existingProperty.status,
-      image: imageName,
-        
+    const updatedProperty = await Property.findByIdAndUpdate(
+      propertyId,
+      {
+        title: title || existingProperty.title,
+        location: location || existingProperty.location,
+        price: formattedPrice || existingProperty.price,
+        bedrooms: bedrooms || existingProperty.bedrooms,
+        bathrooms: bathrooms || existingProperty.bathrooms,
+        squareFeet: squareFeet || existingProperty.squareFeet,
+        phoneNumber: phoneNumber || existingProperty.phoneNumber,
+        description: description || existingProperty.description,
+        type: type || existingProperty.type,
+        status: status || existingProperty.status,
+        image: imageName,
       },
-      { new: true } 
+      { new: true }
     );
-
 
     res.status(200).json({ message: "Property updated successfully" });
   } catch (error) {

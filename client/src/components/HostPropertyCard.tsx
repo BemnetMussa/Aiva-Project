@@ -151,7 +151,7 @@ const HostPropertyCard = ({
 
           {/* Status Badge */}
           <div
-            className={`absolute top-4 left-4 px-3 py-1.5 text-white rounded-full text-xs font-semibold flex gap-1.5 items-center ${
+            className={`absolute top-4 left-4 px-3 py-1.5 text-white rounded-full text-[15px] font-semibold flex gap-1.5 items-center ${
               propertyStatus === "Available" ? "bg-green-500" : "bg-gray-500"
             }`}
           >
@@ -168,9 +168,9 @@ const HostPropertyCard = ({
           {/* Edit Button */}
           <button
             onClick={() => handlePropertyEdit()}
-            className="absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center z-40 bg-white/90 hover:bg-blue-700 transition-all duration-300"
+            className="absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center z-2 bg-white/90 hover:bg-white transition-all duration-300"
           >
-            <Edit className="w-5 h-5 text-gray-700 hover:text-blue-600" />
+            <Edit className="w-5 h-5 text-gray-700 hover:text-gray" />
           </button>
 
           {/* Gradient Overlay */}

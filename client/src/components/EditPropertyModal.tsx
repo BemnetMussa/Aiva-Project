@@ -76,6 +76,7 @@ const PropertyEditModal: React.FC<PropertyEditModalProps> = ({
 
         const data = await response.json();
         setFormData(data);
+        console.log("data ", data)
         setImagePreview(data.image);
       } catch (err) {
         setError("Failed to load property data. Please try again.");
@@ -140,7 +141,7 @@ const PropertyEditModal: React.FC<PropertyEditModalProps> = ({
           method: "PUT",
           credentials: "include",
           body: submitData,
-          // Don't set Content-Type header when using FormData
+    
         }
       );
 
@@ -165,7 +166,7 @@ const PropertyEditModal: React.FC<PropertyEditModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#f3f3f3] overflow-y-auto ">
       <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b">
@@ -186,7 +187,10 @@ const PropertyEditModal: React.FC<PropertyEditModalProps> = ({
               <p className="ml-2">Loading property data...</p>
             </div>
           ) : (
-            <form onSubmit={(e) => handleSubmit(e, propertyId)} id="edit-property-form">
+            <form
+              onSubmit={(e) => handleSubmit(e, propertyId)}
+              id="edit-property-form"
+            >
               {/* Error message */}
               {error && (
                 <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700">
@@ -245,7 +249,7 @@ const PropertyEditModal: React.FC<PropertyEditModalProps> = ({
                     Title
                   </label>
                   <input
-                    type="text"
+                    type="text" 
                     name="title"
                     value={formData.title}
                     onChange={handleChange}
