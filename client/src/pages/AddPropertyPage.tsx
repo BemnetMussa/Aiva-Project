@@ -5,6 +5,7 @@ import ImageUpload from "../components/ImageUploaderDragAndDrop";
 interface AddPropertyFormProps {
   isOpen: boolean;
   onClose: () => void;
+  onPropertyAdded: () => void;
 }
 
 interface PropertyFormData {
@@ -24,6 +25,7 @@ interface PropertyFormData {
 const AddPropertyPage: React.FC<AddPropertyFormProps> = ({
   isOpen,
   onClose,
+  onPropertyAdded,
 }) => {
   const [formData, setFormData] = useState<PropertyFormData>({
     title: "",
@@ -39,6 +41,7 @@ const AddPropertyPage: React.FC<AddPropertyFormProps> = ({
     phoneNumber: "",
   });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -49,9 +52,11 @@ const AddPropertyPage: React.FC<AddPropertyFormProps> = ({
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
     if (!selectedFile) {
-      console.error("No file selected");
+      alert("Please upload an image for your property");
+      setIsSubmitting(false);
       return;
     }
 
@@ -71,12 +76,17 @@ const AddPropertyPage: React.FC<AddPropertyFormProps> = ({
 
       if (response.ok) {
         console.log("Property added successfully");
+        onPropertyAdded();
         onClose();
       } else {
         console.error("Failed to add property");
+        alert("Failed to add property. Please try again.");
       }
     } catch (error) {
       console.error("Error adding property:", error);
+      alert("An error occurred. Please try again later.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -92,46 +102,52 @@ const AddPropertyPage: React.FC<AddPropertyFormProps> = ({
     }
   };
 
-  // for the modal 
+  const handleClearImage = () => {
+    setSelectedFile(null);
+  };
+
+  // for the modal
   if (!isOpen) return null;
 
   // function for the inputs
   const renderFormField = (
     label: string,
     name: keyof PropertyFormData,
-    required?: boolean
+    required?: boolean,
+    type: string = "text"
   ) => (
-    <label className="flex flex-col gap-3 font-semibold text-xl sm:text-lg md:text-md">
-      <h2>
-        {label} {required && <span className="text-red-700">*</span>}
-      </h2>
+    <div className="flex flex-col gap-2">
+      <label className="font-semibold text-base text-gray-700">
+        {label} {required && <span className="text-red-600">*</span>}
+      </label>
       <input
-        type="text"
+        type={type}
         name={name}
-        placeholder={label}
+        placeholder={`Enter ${label.toLowerCase()}`}
         value={formData[name]}
         onChange={handleInputChange}
-        className="rounded-sm border border-gray-300 p-2 w-full bg-gray-50 text-sm"
+        className="rounded-md border border-gray-300 p-2.5 w-full bg-gray-50 text-sm focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors"
       />
-    </label>
+    </div>
   );
 
   return (
     <div
-      className="fixed inset-0 flex justify-center md:h-[1100px] pt-24 z-2 h-full  bg-[#f3f3f3] overflow-y-auto"
+      className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-start justify-center pt-8 pb-8 z-50 overflow-y-auto"
       onClick={handleBackgroundClick}
     >
-      <div className="w-full sm:mx-10 xl:mx-0 xl:w-8/12 bg-white rounded-xl shadow-xl">
-        <div className="relative w-full px-6 pt-6 pb-8">
+      <div className="w-full max-w-4xl mx-4 bg-white rounded-lg shadow-xl">
+        <div className="relative w-full p-6">
           <button
-            className="absolute right-4 top-4 p-2 hover:bg-gray-100 rounded-full"
+            className="absolute right-5 top-5 p-2 hover:bg-gray-100 rounded-full transition-colors"
             onClick={onClose}
+            aria-label="Close"
           >
             <X size={20} />
           </button>
 
-          <div className="flex flex-col items-center gap-8">
-            <h1 className="text-4xl font-semibold text-cyan-500">
+          <div className="flex flex-col items-center gap-6">
+            <h1 className="text-3xl font-semibold text-cyan-600">
               Host Your Property
             </h1>
 
@@ -139,21 +155,57 @@ const AddPropertyPage: React.FC<AddPropertyFormProps> = ({
               onSubmit={handleSubmit}
               className="w-full flex flex-col gap-8"
             >
-              <div className="grid md:grid-cols-3 gap-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5">
                 {renderFormField("Property Name", "title", true)}
                 {renderFormField("Address", "address", true)}
                 {renderFormField("City", "city", true)}
-                {renderFormField("Price", "price")}
-                {renderFormField("Bedrooms", "bedrooms")}
-                {renderFormField("Bathrooms", "bathrooms")}
-                {renderFormField("Square Feet", "squareFeet")}
-                {renderFormField("Type", "type", true)}
-                {renderFormField("Status", "status")}
+                {renderFormField("Price", "price", false, "number")}
+                {renderFormField("Bedrooms", "bedrooms", false, "number")}
+                {renderFormField("Bathrooms", "bathrooms", false, "number")}
+                {renderFormField("Square Feet", "squareFeet", false, "number")}
+
+                <div className="flex flex-col gap-2">
+                  <label className="font-semibold text-base text-gray-700">
+                    Type <span className="text-red-600">*</span>
+                  </label>
+                  <select
+                    name="type"
+                    value={formData.type}
+                    onChange={handleInputChange as any}
+                    className="rounded-md border border-gray-300 p-2.5 w-full bg-gray-50 text-sm focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
+                  >
+                    <option value="">Select property type</option>
+                    <option value="House">House</option>
+                    <option value="Apartment">Apartment</option>
+                    <option value="Condo">Condo</option>
+                    <option value="Townhouse">Townhouse</option>
+                    <option value="Villa">Villa</option>
+                  </select>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <label className="font-semibold text-base text-gray-700">
+                    Status
+                  </label>
+                  <select
+                    name="status"
+                    value={formData.status}
+                    onChange={handleInputChange as any}
+                    className="rounded-md border border-gray-300 p-2.5 w-full bg-gray-50 text-sm focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
+                  >
+                    <option value="">Select status</option>
+                    <option value="For Sale">For Sale</option>
+                    <option value="For Rent">For Rent</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Sold">Sold</option>
+                  </select>
+                </div>
+
                 {renderFormField("Phone Number", "phoneNumber", true)}
               </div>
 
-              <div className="flex flex-col space-y-4">
-                <label className="font-semibold text-xl sm:text-lg md:text-md">
+              <div className="flex flex-col space-y-2">
+                <label className="font-semibold text-base text-gray-700">
                   Property Description
                 </label>
                 <textarea
@@ -161,36 +213,64 @@ const AddPropertyPage: React.FC<AddPropertyFormProps> = ({
                   value={formData.description}
                   onChange={handleInputChange}
                   placeholder="Write a detailed description of your property..."
-                  className="p-4 h-40 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  className="p-3 h-32 rounded-md border border-gray-300 bg-gray-50 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 text-sm resize-none"
                 />
-                <small className="text-gray-500">Max 500 characters</small>
+                <div className="flex justify-between items-center">
+                  <small className="text-gray-500">Max 500 characters</small>
+                  <small className="text-gray-500">
+                    {formData.description.length}/500
+                  </small>
+                </div>
               </div>
 
-              <div className="w-full max-w-lg mx-auto">
-                <h2 className="text-lg font-semibold mb-4">Upload an Image</h2>
-                <ImageUpload onFileSelect={handleFileSelect} />
+              <div className="grid md:grid-cols-2 gap-6 items-start">
+                <div className="w-full">
+                  <h2 className="text-base font-semibold text-gray-700 mb-3">
+                    Upload Property Image{" "}
+                    <span className="text-red-600">*</span>
+                  </h2>
+                  <ImageUpload onFileSelect={handleFileSelect} />
+                </div>
 
-                {selectedFile && (
-                  <div className="mt-4">
-                    <p className="text-sm text-gray-600">
-                      Selected file: {selectedFile.name}
+                {selectedFile ? (
+                  <div className="w-full flex flex-col">
+                    <div className="relative">
+                      <img
+                        src={URL.createObjectURL(selectedFile)}
+                        alt="Property Preview"
+                        className="w-full h-60 object-cover rounded-md shadow-sm"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleClearImage}
+                        className="absolute top-2 right-2 bg-white rounded-full p-1 shadow-md hover:bg-gray-100"
+                        aria-label="Remove image"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+                    <p className="mt-2 text-sm text-gray-600 truncate">
+                      {selectedFile.name} (
+                      {Math.round(selectedFile.size / 1024)} KB)
                     </p>
-                    <img
-                      src={URL.createObjectURL(selectedFile)}
-                      alt="Preview"
-                      className="mt-2 w-full h-auto rounded-lg shadow"
-                    />
+                  </div>
+                ) : (
+                  <div className="w-full h-60 bg-gray-100 rounded-md flex items-center justify-center">
+                    <p className="text-gray-400 text-sm">
+                      Image preview will appear here
+                    </p>
                   </div>
                 )}
               </div>
 
-              <div className="flex justify-center w-full">
+              <div className="flex justify-center w-full mt-4">
                 <button
                   type="submit"
-                  className="bg-cyan-500 text-white text-sm px-6 py-3 font-medium rounded-sm 
-                           w-full max-w-md hover:bg-cyan-600 transition-colors"
+                  disabled={isSubmitting}
+                  className="bg-cyan-500 text-white px-6 py-3 font-medium rounded-md 
+                           w-full max-w-md hover:bg-cyan-600 transition-colors disabled:bg-cyan-300 disabled:cursor-not-allowed"
                 >
-                  Add New Property
+                  {isSubmitting ? "Adding Property..." : "Add New Property"}
                 </button>
               </div>
             </form>

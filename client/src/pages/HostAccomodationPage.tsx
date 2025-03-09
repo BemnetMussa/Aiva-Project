@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import HostPropertyCard from "../components/HostPropertyCard";
 import { Plus } from "lucide-react";
 import AddPropertyForm from "./AddPropertyPage";
-
+import { Bounce, ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // Don't forget to import the CSS
 
 interface Property {
   _id: string;
@@ -47,10 +48,33 @@ export const HostAccommodation: React.FC = () => {
     setIsAddingProperty(true);
   };
 
+  const handlePropertyAdded = () => {
+    // Close the form
+    setIsAddingProperty(false);
+
+    // Show success notification with react-toastify
+    toast.success("Property added successfully!", {
+      position: "top-right",
+      autoClose: 3500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      transition: Bounce,
+    });
+
+    // Refresh the property list
+    fetchProperties();
+  };
+
   return (
-    <div className="flex overflow-hidden flex-col items-center w-full pt-14 bg-[#f3f3f3] h-[100vh]">
+    <div className="flex overflow-hidden flex-col items-center w-full pt-14 bg-[#f3f3f3] h-[100%]">
       {/* Navbar section */}
       <Navbar />
+
+      {/* Toast Container for notifications */}
+      <ToastContainer />
 
       <div className="items-start p-8 absolute left-12 top-24">
         <h2 className="border-b-4 border-black font-bold">Hosted Bookings</h2>
@@ -71,6 +95,7 @@ export const HostAccommodation: React.FC = () => {
         <AddPropertyForm
           isOpen={isAddingProperty}
           onClose={() => setIsAddingProperty(false)}
+          onPropertyAdded={handlePropertyAdded}
         />
       )}
 

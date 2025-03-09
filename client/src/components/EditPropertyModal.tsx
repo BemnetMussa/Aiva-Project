@@ -58,7 +58,7 @@ const PropertyEditModal: React.FC<PropertyEditModalProps> = ({
     const fetchPropertyData = async (propertyId: string) => {
       try {
         setLoading(true);
-        console.log("propertyId", propertyId)
+        console.log("propertyId", propertyId);
         const response = await fetch(
           `http://localhost:5000/api/properties/${propertyId}`,
           {
@@ -76,7 +76,7 @@ const PropertyEditModal: React.FC<PropertyEditModalProps> = ({
 
         const data = await response.json();
         setFormData(data);
-        console.log("data ", data)
+        console.log("data ", data);
         setImagePreview(data.image);
       } catch (err) {
         setError("Failed to load property data. Please try again.");
@@ -99,7 +99,7 @@ const PropertyEditModal: React.FC<PropertyEditModalProps> = ({
       [name]: value,
     });
   };
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -110,6 +110,12 @@ const PropertyEditModal: React.FC<PropertyEditModalProps> = ({
       setImagePreview(previewUrl);
     }
   };
+  
+    const handleBackgroundClick = (e: React.MouseEvent<HTMLDivElement>) => {
+      if (e.target === e.currentTarget) {
+        onClose();
+      }
+    };
 
   const handleSubmit = async (e: FormEvent, propertyId: string) => {
     e.preventDefault();
@@ -117,9 +123,9 @@ const PropertyEditModal: React.FC<PropertyEditModalProps> = ({
     setError("");
     setSuccess("");
 
+
     try {
-      
-      console.log("handleSubmit", propertyId)
+      console.log("handleSubmit", propertyId);
       // Create FormData object to handle file upload
       const submitData = new FormData();
 
@@ -141,7 +147,6 @@ const PropertyEditModal: React.FC<PropertyEditModalProps> = ({
           method: "PUT",
           credentials: "include",
           body: submitData,
-    
         }
       );
 
@@ -166,7 +171,10 @@ const PropertyEditModal: React.FC<PropertyEditModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#f3f3f3] overflow-y-auto ">
+    <div
+      className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-start justify-center pt-8 pb-8 z-50 overflow-y-auto"
+      onClick={handleBackgroundClick}
+    >
       <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b">
@@ -249,7 +257,7 @@ const PropertyEditModal: React.FC<PropertyEditModalProps> = ({
                     Title
                   </label>
                   <input
-                    type="text" 
+                    type="text"
                     name="title"
                     value={formData.title}
                     onChange={handleChange}

@@ -16,7 +16,7 @@ interface PropertyCardProps {
   title: string;
   location: string;
   price: number;
-  bedrooms: number;
+bedrooms: number;
   bathrooms: number;
   squareFeet: number;
   rating?: number;
