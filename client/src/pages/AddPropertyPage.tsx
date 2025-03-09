@@ -175,11 +175,9 @@ const AddPropertyPage: React.FC<AddPropertyFormProps> = ({
                     className="rounded-md border border-gray-300 p-2.5 w-full bg-gray-50 text-sm focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
                   >
                     <option value="">Select property type</option>
-                    <option value="House">House</option>
-                    <option value="Apartment">Apartment</option>
-                    <option value="Condo">Condo</option>
-                    <option value="Townhouse">Townhouse</option>
-                    <option value="Villa">Villa</option>
+                    <option value="Sell">For Sell</option>
+                    <option value="Rent">For Rent</option>
+                  
                   </select>
                 </div>
 
@@ -194,10 +192,9 @@ const AddPropertyPage: React.FC<AddPropertyFormProps> = ({
                     className="rounded-md border border-gray-300 p-2.5 w-full bg-gray-50 text-sm focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
                   >
                     <option value="">Select status</option>
-                    <option value="For Sale">For Sale</option>
-                    <option value="For Rent">For Rent</option>
-                    <option value="Pending">Pending</option>
-                    <option value="Sold">Sold</option>
+                    <option value="Available">Available</option>
+                    <option value="Unavailable">Unavailable</option>
+    
                   </select>
                 </div>
 
