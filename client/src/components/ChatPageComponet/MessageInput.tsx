@@ -6,7 +6,7 @@ import { RootState } from "../../redux/store";
 
 export const MessageInput = () => {
   const chats = useSelector((state: RootState) => state.chat);
-  const auth = useSelector((state: RootState) => state.auth);
+  const user = useSelector((state: RootState) => state.auth.user);
   const [message, setMessage] = useState("");
   const dispatch = useDispatch();
 
@@ -17,7 +17,7 @@ export const MessageInput = () => {
     const newMessage: Message = {
       _id: crypto.randomUUID(), // Generates a unique ID
       chatId: chats.activeChat ?? "", // Assuming chats.activeChat holds the current chat ID
-      sender: auth.user._id, // Assuming auth.user contains the logged-in user's ID
+      sender: user?._id ?? null, // Assuming auth.user contains the logged-in user's ID
       content: message, // Assuming 'message' holds the text content
       messageType: "text", // You can change this to "file", "image", etc.
       createdAt: new Date().toISOString(),

@@ -17,7 +17,7 @@ type MessageType = "text" | "file" | "image" | "video" | "audio";
 interface Message {
   _id: string;
   chatId: string;
-  sender: string;
+  sender: string | null;
   content: string;
   messageType: MessageType;
   createdAt: string;

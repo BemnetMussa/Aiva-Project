@@ -1,27 +1,31 @@
 import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 
 const MessageDisplayer = () => {
-  const messages = useSelector((state: any) => state.chat.messages);
-  const user = useSelector((state: any) => state.auth.user);
-  const userId = user.id;
+  const { messages, activeChat } = useSelector(
+    (state: RootState) => state.chat
+  );
+  const user = useSelector((state: RootState) => state.auth.user);
+
+  const chatMessages = activeChat ? messages[activeChat] || [] : [];
 
   return (
     <div className="flex-1 p-4 overflow-y-auto  w-full h-full">
-      {messages.map((msg: any) => (
+      {chatMessages.map((msg: any) => (
         <div
           key={msg._id}
           className={`flex p-2 my-2 ${
-            msg.sender === user._id ? "justify-end" : "justify-start"
+            msg.sender === user?._id ? "justify-end" : "justify-start"
           }`}
         >
           <span
             className={`p-2 rounded-md ${
-              msg.sender === userId
+              msg.sender === user?._id
                 ? "bg-blue-500 text-white"
                 : "bg-gray-200 text-black"
             } max-w-xs`}
           >
-            {msg.content}
+            {msg.content}zjznxkjZ
           </span>
         </div>
       ))}
