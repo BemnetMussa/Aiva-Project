@@ -44,7 +44,7 @@ export const ChatNav = () => {
               />
             </div>
             {/* loading and error */}
-            {loading && <div>Loading...</div>}
+            {loading && <div className="text-gray-400">Loading...</div>}
             {error && <div className="text-red-500">{error}</div>}
 
             {/* Show the dropdown list when there are search results */}
@@ -54,6 +54,14 @@ export const ChatNav = () => {
                 onSelectUser={handleSelectUser}
               />
             )}
+            {searchResults?.length === 0 &&
+              searchTerm &&
+              !loading &&
+              !error && (
+                <div className="text-center font-medium text-gray-400 text-lg mt-3">
+                  No Result
+                </div>
+              )}
           </div>
           <Ellipsis />
         </div>
