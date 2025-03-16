@@ -4,9 +4,11 @@ import { EyeOff } from "lucide-react";
 import GoogleAuth from "../components/GoogleAuth";
 import { useDispatch } from "react-redux";
 import { loginFailed, loginSuccess } from "../redux/slices/authSlice";
+import { getUserChats } from "../redux/slices/chatSlice";
+import { AppDispatch } from "../redux/store";
 
 const LoginPage: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [redirect, setRedirect] = useState(false);
@@ -32,7 +34,8 @@ const LoginPage: React.FC = () => {
 
     if (response.ok) {
       console.log(response);
-      dispatch(loginSuccess({ user: data.user }));
+      dispatch(loginSuccess({ token: data.token, user: data.user }));
+      dispatch(getUserChats(data.user._id));
       console.log(data);
       setRedirect(true);
     } else {

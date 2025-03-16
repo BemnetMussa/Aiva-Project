@@ -35,7 +35,10 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    loginSuccess: (state, action: PayloadAction<{ user: any }>) => {
+    loginSuccess: (
+      state,
+      action: PayloadAction<{ token: string; user: any }>
+    ) => {
       state.token = getCookie("accessToken");
       state.user = action.payload.user;
       state.error = null;
@@ -81,7 +84,12 @@ export const handleLogin = (
     // Simulated example of a failed API call
     const apiCallSuccess = false; // Change to true to simulate successful login
     if (apiCallSuccess) {
-      dispatch(loginSuccess({ user: { name: "John Doe" } }));
+      dispatch(
+        loginSuccess({
+          user: { name: "John Doe" },
+          token: tokenFromCookie ?? "",
+        })
+      );
     } else {
       dispatch(
         loginFailed({ error: "Invalid email or password. Please try again." })

@@ -8,8 +8,21 @@ import DetailPropertyPage from "./pages/DetailPropertyPage";
 import ChatPage from "./pages/ChatPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { FavoritesPage } from "./pages/FavoritesPage";
+import { getUserChats } from "../src/redux/slices/chatSlice";
+import { AppDispatch, RootState } from "../src/redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
 
 const App = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const user = useSelector((state: RootState) => state.auth.user);
+
+  useEffect(() => {
+    if (user?._id) {
+      dispatch(getUserChats(user._id));
+    }
+    console.log("userId:", user?._id);
+  }, [user?._id, dispatch]);
   return (
     <Router>
       <Routes>

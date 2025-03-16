@@ -34,15 +34,20 @@ interface ChatState {
 // Create or get a chat between two users
 export const createOrGetChat = createAsyncThunk(
   "chat/createOrGetChat",
-  async ({ user1, user2 }: Chat, { rejectWithValue }) => {
+  async (targetUserId: string, { rejectWithValue }) => {
     try {
-      const response = await fetch("/api/chat/get-create-chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user1, user2 }),
-      });
+      const response = await fetch(
+        "http://localhost:5000/api/chat/start-chat",
+        {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ targetUserId }),
+        }
+      );
 
       const data = await response.json();
+      console.log(data);
       if (!response.ok)
         throw new Error(data.message || "Failed to create/get chat");
 
@@ -78,11 +83,20 @@ export const getUserChats = createAsyncThunk(
   "chat/getUserChats",
   async (userId: string, { rejectWithValue }) => {
     try {
-      const res = await fetch(`/api/chat/user/${userId}`);
+      const res = await fetch(`http://localhost:5000/api/chat/user/${userId}`, {
+        method: "GET",
+        credentials: "include",
+      });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
+
+      if (!res.ok) {
+        // Handle error if the response is not OK
+        console.log(data.message);
+        throw new Error(data.message || "Failed to fetch chats");
+      }
       return data;
     } catch (error: any) {
+      console.log(error);
       return rejectWithValue(error.message);
     }
   }
@@ -109,6 +123,7 @@ export const sendMessage = createAsyncThunk(
       if (!res.ok) throw new Error(data.message);
       return data;
     } catch (error: any) {
+      console.log(error);
       return rejectWithValue(error.message);
     }
   }
@@ -189,17 +204,26 @@ const chatSlice = createSlice({
     builder
       // Handle successful chat creation or retrieval
       .addCase(createOrGetChat.fulfilled, (state, action) => {
-        const existingChat = state.chats.find(
-          (chat) => chat._id === action.payload._id
+        const newChat = action.payload.chat;
+        const existingChat = state.chats?.some(
+          (chat) => chat?._id === newChat._id
         );
         if (!existingChat) {
-          state.chats.push(action.payload);
+          state.chats?.push(newChat);
         }
         state.loading = false;
       })
+      // Handle setting the loading state
+      .addCase(createOrGetChat.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(createOrGetChat.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string; // Store error message
+      })
       // Handle successful message send
       .addCase(sendMessage.fulfilled, (state, action) => {
-        const { chatId } = action.payload;
+        const chatId = action.payload.chat._id;
         if (!state.messages[chatId]) {
           state.messages[chatId] = [];
         }
@@ -208,6 +232,13 @@ const chatSlice = createSlice({
       // Handle fetching user chats
       .addCase(getUserChats.fulfilled, (state, action) => {
         state.chats = action.payload; // Update chat list with user chats
+      })
+      .addCase(getUserChats.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getUserChats.rejected, (state, action) => {
+        state.error = action.error.message ?? null;
+        state.loading = false;
       })
       // Handle fetching messages for a chat
       .addCase(getChatMessages.fulfilled, (state, action) => {
@@ -219,14 +250,6 @@ const chatSlice = createSlice({
           (chat) => chat._id !== action.payload.chatId
         );
         delete state.messages[action.payload.chatId];
-      })
-      // Handle setting the loading state
-      .addCase(createOrGetChat.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(createOrGetChat.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string; // Store error message
       });
   },
 });

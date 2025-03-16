@@ -10,25 +10,40 @@ export const createOrGetChat = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { user1, user2 } = req.body;
+    const { targetUserId } = req.body;
+    const currentUserId = req.user?._id;
 
-    if (!user1 || !user2) {
-      res.status(400).json({ message: "Both users are required" });
+    if (!targetUserId || !currentUserId) {
+      res.status(400).json({ message: "Missing required user IDs." });
       return;
     }
 
     let chat = await Chat.findOne({
       $or: [
-        { user1, user2 },
-        { user1: user2, user2: user1 },
+        { user1: currentUserId, user2: targetUserId },
+        { user1: targetUserId, user2: currentUserId },
       ],
-    }).populate("lastMessage");
+    }).populate([
+      { path: "user1", select: "-password -refreshToken" }, // Exclude sensitive fields
+      { path: "user2", select: "-password -refreshToken" }, // Exclude sensitive fields
+      { path: "lastMessage", select: "message" }, // Optionally, include specific fields from `lastMessage`
+    ]);
 
+    // if chat doesn't exist && create new one
     if (!chat) {
-      chat = await Chat.create({ user1, user2 });
+      chat = await Chat.create({
+        user1: currentUserId,
+        user2: targetUserId,
+      });
+
+      // Populate users and other fields after creation
+      await chat.populate([
+        { path: "user1", select: "-password -refreshToken" },
+        { path: "user2", select: "-password -refreshToken" },
+      ]);
     }
 
-    res.status(200).json(chat);
+    res.status(200).json({ chat });
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -57,6 +72,11 @@ export const getUserChats = async (
       .populate("user1", "name email image")
       .populate("user2", "name email image")
       .populate("lastMessage");
+
+    if (!chats) {
+      res.status(404).json({ message: "No chats found for this user" });
+      return;
+    }
 
     res.status(200).json(chats);
   } catch (error) {

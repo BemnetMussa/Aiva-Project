@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../../redux/store";
 import { setSearchTerm, searchUsers } from "../../redux/slices/searchSlice";
 import { useEffect } from "react";
+import { createOrGetChat } from "../../redux/slices/chatSlice";
+import { useDebounce } from "../../redux/hooks";
 
 export const ChatNav = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -12,22 +14,24 @@ export const ChatNav = () => {
     (state: RootState) => state.search
   );
 
+  // Debounce the search term to avoid too many API calls
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
   useEffect(() => {
-    if (searchTerm.trim()) {
-      dispatch(searchUsers(searchTerm));
+    if (debouncedSearchTerm.trim()) {
+      dispatch(searchUsers(debouncedSearchTerm));
     }
-  }, [searchTerm, dispatch]);
+  }, [debouncedSearchTerm, dispatch]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(setSearchTerm(e.target.value));
   };
 
-  const handleSelectUser = (user: { _id: string; name: string }) => {
-    console.log("Selected user:", user);
+  const handleSelectUser = (targetUser: { _id: string; name: string }) => {
+    const targetUserId = targetUser._id;
     // Handle user selection (e.g., open chat)
+    dispatch(createOrGetChat(targetUserId));
   };
-
-  console.log(error);
 
   return (
     <div className="flex-1 flex flex-col justify-between py-7">
@@ -43,19 +47,28 @@ export const ChatNav = () => {
                 onChange={handleChange}
               />
             </div>
-            {/* loading and error */}
-            {loading && <div className="text-gray-400">Loading...</div>}
-            {error && <div className="text-red-500">{error}</div>}
 
-            {/* Show the dropdown list when there are search results */}
-            {searchTerm && searchResults?.length > 0 && (
+            {/* Loading and error handling */}
+            {(loading || error) && (
+              <div
+                className={`text-center font-medium ${
+                  loading ? "text-gray-400" : "text-red-500"
+                }`}
+              >
+                {loading ? "Loading..." : error}
+              </div>
+            )}
+
+            {/* Show dropdown when search term has results */}
+            {debouncedSearchTerm && searchResults?.length > 0 && (
               <DropDownSearch
                 searchResults={searchResults}
                 onSelectUser={handleSelectUser}
               />
             )}
+
             {searchResults?.length === 0 &&
-              searchTerm &&
+              debouncedSearchTerm &&
               !loading &&
               !error && (
                 <div className="text-center font-medium text-gray-400 text-lg mt-3">
@@ -65,12 +78,15 @@ export const ChatNav = () => {
           </div>
           <Ellipsis />
         </div>
+
+        {/* Chat List */}
         <div className="w-full  flex flex-col justify-center gap-2">
           <h2 className="text-lg font-semibold mb-4">Friends</h2>
           <ChatLists />
         </div>
       </div>
 
+      {/* Navigation buttons */}
       <div className="flex justify-evenly text-[.8rem] font-semibold text-gray-700 tracking-wider">
         <button className="flex flex-col cursor-pointer gap-3 justify-center items-center">
           <Bell className="text-cyan-500" />

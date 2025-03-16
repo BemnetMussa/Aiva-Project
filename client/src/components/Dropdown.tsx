@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { logout } from "../redux/slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { persistor } from "../redux/store";
 
 const DropdownButton = () => {
   const navigate = useNavigate();
@@ -26,6 +27,7 @@ const DropdownButton = () => {
 
       if (response) {
         dispatch(logout()); // ✅ Clears Redux state
+        persistor.purge();
         navigate("/");
         return;
       }
