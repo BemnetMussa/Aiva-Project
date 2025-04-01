@@ -1,20 +1,24 @@
 import React, { useState } from "react";
-import { Link, Navigate, redirect } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { EyeOff } from "lucide-react";
 import GoogleAuth from "../components/GoogleAuth";
 import { useDispatch } from "react-redux";
 import { loginFailed, loginSuccess } from "../redux/slices/authSlice";
+import { getUserChats } from "../redux/slices/chatSlice";
+import { AppDispatch } from "../redux/store";
 
 const LoginPage: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [redirect, setRedirect] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
 
-    const response = await fetch("http://localhost:5000/api/users/login", {
+    const response = await fetch("http://localhost:5000/api/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -30,7 +34,9 @@ const LoginPage: React.FC = () => {
 
     if (response.ok) {
       console.log(response);
-      dispatch(loginSuccess({ user: data.user, token: data.token }));
+      dispatch(loginSuccess({ token: data.token, user: data.user }));
+      dispatch(getUserChats(data.user._id));
+      console.log(data);
       setRedirect(true);
     } else {
       dispatch(loginFailed({ error: data.error }));
@@ -102,7 +108,7 @@ const LoginPage: React.FC = () => {
               type="submit"
               onClick={handleSubmit}
             >
-              Login
+              {loading ? <span>loading</span> : <p>login</p>}
             </button>
           </form>
         </div>

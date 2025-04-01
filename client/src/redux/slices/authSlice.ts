@@ -1,19 +1,34 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
+import getCookie from "../../util/retriveCookies";
+
+type User = {
+  _id: string;
+  name: string;
+  email: string;
+  admin: boolean;
+  gender: "male" | "female";
+  dob: Date;
+  agree: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
 
 interface AuthState {
   token: string | null;
-  user: any;
+  user: User | null;
   error: string | null;
   isAuthenticated: boolean;
 }
 
+const tokenFromCookie = getCookie("accessToken");
+
 const initialState: AuthState = {
-  token: localStorage.getItem("token") || null,
+  token: tokenFromCookie || null,
   user: null,
   error: null,
-  isAuthenticated: !!localStorage.getItem("token"),
+  isAuthenticated: !!tokenFromCookie,
 };
 
 const authSlice = createSlice({
@@ -24,17 +39,15 @@ const authSlice = createSlice({
       state,
       action: PayloadAction<{ token: string; user: any }>
     ) => {
-      state.token = action.payload.token;
+      state.token = getCookie("accessToken");
       state.user = action.payload.user;
       state.error = null;
       state.isAuthenticated = true;
-      localStorage.setItem("token", action.payload.token);
     },
     logout: (state) => {
       state.token = null;
       state.user = null;
       state.isAuthenticated = false;
-      localStorage.removeItem("token");
     },
     loginFailed: (state, action: PayloadAction<{ error: string }>) => {
       state.token = null;
@@ -48,7 +61,7 @@ const authSlice = createSlice({
 const persistConfig = {
   key: "auth",
   storage,
-  whitelist: ["token"],
+  whitelist: ["token", "isAuthenticated"],
 };
 
 export const { loginSuccess, logout, loginFailed } = authSlice.actions;
@@ -72,7 +85,10 @@ export const handleLogin = (
     const apiCallSuccess = false; // Change to true to simulate successful login
     if (apiCallSuccess) {
       dispatch(
-        loginSuccess({ token: "example_token", user: { name: "John Doe" } })
+        loginSuccess({
+          user: { name: "John Doe" },
+          token: tokenFromCookie ?? "",
+        })
       );
     } else {
       dispatch(

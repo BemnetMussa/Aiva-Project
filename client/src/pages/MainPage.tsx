@@ -1,17 +1,16 @@
 import * as React from "react";
 import PropertyCard from "../components/PropertyCard";
 import SearchForm from "../components/SearchForm";
-import { Pagination } from "../components/Pagination";
 import { SearchFormData } from "../components/types";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
 import { fetchCategories } from "../redux/slices/categorySlice";
 import { fetchFavorites } from "../redux/slices/favoriteSlice";
 import { addFavorite } from "../redux/slices/favoriteSlice";
-import { useAppDispatch } from "../redux/hooks";
 
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../redux/store";
 
 interface Property {
   _id: string;
@@ -27,6 +26,8 @@ interface Property {
 }
 
 export const ZimanyHome: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
+
   const handleSearch = (data: SearchFormData) => {
     console.log("Search data:", data);
   };
@@ -36,7 +37,6 @@ export const ZimanyHome: React.FC = () => {
   };
 
   const [properties, setProperties] = useState<Property[]>([]);
-  const dispatch = useAppDispatch();
 
   useEffect(() => {
     const fetchProperties = async () => {
@@ -57,21 +57,18 @@ export const ZimanyHome: React.FC = () => {
     fetchProperties();
   }, [dispatch]);
 
-
-
-    const handleAddFavoriteClick = async (
-      propertyId: string,
-      categoryId: string
-    ) => {
-      try {
-        await dispatch(addFavorite({ propertyId, categoryId })).unwrap();
-        // After successful addition, refresh favorites
-        dispatch(fetchFavorites() as any);
-      } catch (error) {
-        console.error("Error adding favorite:", error);
-      }
-    };
-  
+  const handleAddFavoriteClick = async (
+    propertyId: string,
+    categoryId: string
+  ) => {
+    try {
+      await dispatch(addFavorite({ propertyId, categoryId })).unwrap();
+      // After successful addition, refresh favorites
+      dispatch(fetchFavorites() as any);
+    } catch (error) {
+      console.error("Error adding favorite:", error);
+    }
+  };
 
   return (
     <div className="flex overflow-hidden flex-col items-center w-full pt-14 bg-white border">

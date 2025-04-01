@@ -2,7 +2,7 @@ import { EyeOff } from "lucide-react";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import GoogleAuth from "../components/GoogleAuth";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { loginFailed, loginSuccess } from "../redux/slices/authSlice";
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -22,7 +22,7 @@ const SignupPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const response = await fetch("http://localhost:5000/api/users/signup", {
+    const response = await fetch("http://localhost:5000/api/auth/signup", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -30,7 +30,7 @@ const SignupPage: React.FC = () => {
       body: JSON.stringify({
         name,
         email,
-        password, 
+        password,
         dob,
         gender,
         agree,
@@ -39,14 +39,16 @@ const SignupPage: React.FC = () => {
 
     const data = await response.json();
 
+    console.log(data);
+
     if (response.ok) {
-      dispatch(loginSuccess({ token: data.token, user: data.user }));
+      dispatch(loginSuccess({ token: data.user.token, user: data.user }));
       toast.success("Account successfully created! Redirecting...");
+      navigate("/");
 
       setTimeout(() => {
         navigate("/");
       }, 2000);
-
     } else {
       dispatch(loginFailed({ error: data.message }));
       console.log(data.message);
@@ -178,7 +180,7 @@ const SignupPage: React.FC = () => {
               className="bg-blue-500 px-12 py-3 rounded-xl w-full mt-5 justify-center text-white"
               type="submit"
             >
-              Login
+              signup
             </button>
           </form>
         </div>

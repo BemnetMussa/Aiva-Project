@@ -3,7 +3,6 @@ import User from "../models/User";
 import {
   generateAccessToken,
   generateRefreshToken,
-  generateToken,
   verifyToken,
 } from "../utils/generateToken";
 
@@ -99,7 +98,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const accessToken = generateAccessToken(user._id);
+    const accessToken = await generateAccessToken(user._id);
     const refreshToken = await generateRefreshToken(user._id);
 
     user.refreshToken = refreshToken;
@@ -133,9 +132,25 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 };
 
 // logout funtion
-export const logout = (req: Request, res: Response) => {
-  res.clearCookie("accessToken");
-  res.clearCookie("refreshToken");
+export const logout = async (req: Request, res: Response) => {
+  const userId = (req as any).user?.id;
+
+  await User.findByIdAndUpdate(userId, { refreshToken: null });
+
+  res.cookie("accessToken", "", {
+    httpOnly: true,
+    // secure: process.env.NODE_ENV === "production",
+    // sameSite: "Strict",
+    expires: new Date(0),
+  });
+
+  res.cookie("refreshToken", "", {
+    httpOnly: true,
+    // secure: process.env.NODE_ENV === "production",
+    // sameSite: "Strict",
+    expires: new Date(0),
+  });
+
   res.status(200).json({ message: "Logged out successfully" });
 };
 
@@ -243,9 +258,11 @@ export const resetPassword = async (
 };
 
 // Initialize Firebase Admin SDK
-admin.initializeApp({
-  credential: admin.credential.cert(require("../serviceAccountKey.json")),
-});
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert(require("../serviceAccountKey.json")),
+  });
+}
 
 // google auth function
 export const google = async (req: Request, res: Response): Promise<void> => {
@@ -257,8 +274,14 @@ export const google = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
+    console.log("Received Firebase Token:", firebaseToken);
+
+    console.log("Token Length:", firebaseToken.length);
+
     // 🔹 Verify Firebase Token (Checks with Google)
     const decodedToken = await admin.auth().verifyIdToken(firebaseToken);
+
+    console.log(decodedToken);
 
     let user = await User.findOne({ email: decodedToken.email });
 
@@ -272,10 +295,40 @@ export const google = async (req: Request, res: Response): Promise<void> => {
     const userData = user.toObject();
     const { password, ...rest } = userData;
 
-    console.log(rest);
+    console.log(rest); // 🔹 Return a JWT Token for further communication with your server
+    const accessToken = generateAccessToken(user); // Function to generate JWT for the user
 
-    res.status(201).json({ message: "User created successfully", rest });
-  } catch (error) {
+    const refreshToken = generateRefreshToken(user);
+
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      // secure: process.env.NODE_ENV === "production", // Comment this out for development
+      // sameSite: 'Strict'
+      maxAge: 15 * 60 * 1000,
+    });
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      // secure: process.env.NODE_ENV === "production", // Comment this out for development
+      // sameSite: 'Strict'
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    res.status(201).json({ message: "User created successfully", user: rest });
+  } catch (error: unknown) {
+    console.log(error);
+    if (error instanceof Error) {
+      if (error.message.includes("id-token-expired")) {
+        res.status(401).json({
+          message: "Firebase token has expired. Please reauthenticate.",
+        });
+        return;
+      }
+      console.error("Google Auth Error:", error.message);
+    } else {
+      console.error("Unknown error occurred:", error);
+    }
+
     res.status(500).json({ message: "Server error" });
     return;
   }

@@ -5,15 +5,16 @@ import {
   deleteAccount,
   getAllUser,
   getUserDetail,
+  searchUsers,
   updateUserProfile,
 } from "../controllers/UserController";
 
 const router = express.Router();
 
-
 router.post("/update-user", protect, updateUserProfile);
 router.get("/get-user-detail", protect, getUserDetail);
 router.get("/get-all-user", protect, isAdmin, getAllUser);
 router.delete("/get-user-detail", protect, deleteAccount);
+router.get("/search", protect, searchUsers);
 
 export default router;

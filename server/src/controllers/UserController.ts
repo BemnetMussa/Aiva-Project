@@ -154,3 +154,29 @@ export const getAllUser = async (req: Request, res: Response) => {
     return;
   }
 };
+
+export const searchUsers = async (req: Request, res: Response) => {
+  try {
+    const keyword = (req.query.search as string) || "";
+
+    if (!keyword) {
+      res.status(400).json({ message: "Search query is required" });
+      return;
+    }
+
+    // Find users that match the search query and exclude the current user
+    const users = await User.find({
+      $or: [
+        { name: { $regex: keyword, $options: "i" } }, // Case-insensitive search on name
+        { email: { $regex: keyword, $options: "i" } }, // Case-insensitive search on email
+      ],
+      _id: { $ne: req.user?._id }, // Exclude the current user
+    }).select("-password -refreshToken");
+
+    res.status(200).json(users);
+  } catch (error) {
+    console.error("Search error:", error);
+    res.status(500).json({ message: "Server Error" });
+    return;
+  }
+};

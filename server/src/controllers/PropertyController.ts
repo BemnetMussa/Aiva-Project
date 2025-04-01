@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 
-import Property from "../models/Property";
+import Property from "../models/property";
 import {
   S3Client,
   PutObjectCommand,

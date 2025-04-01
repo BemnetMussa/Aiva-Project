@@ -8,10 +8,10 @@ export const sendMessage = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { chatId, sender, content } = req.body;
+    const { chatId, sender, content, fileUrl } = req.body;
 
-    if (!chatId || !sender || !content) {
-      res.status(400).json({ message: "All fields are required" });
+    if (!chatId || !sender || (!content && !fileUrl)) {
+      res.status(400).json({ message: "Content or file URL is required." });
       return;
     }
 
