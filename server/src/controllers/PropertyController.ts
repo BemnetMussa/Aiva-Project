@@ -15,6 +15,7 @@ import dotenv from "dotenv";
 import crypto from "crypto";
 
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { error } from "console";
 
 dotenv.config();
 
@@ -85,7 +86,7 @@ export const addProperty = async (
 
   const {
     title,
-    location,
+    address: location,
     price,
     bedrooms,
     bathrooms,
@@ -98,6 +99,8 @@ export const addProperty = async (
 
   const userId = (req as any).user?.id; // Get the user ID from the token
 
+  const formattedPrice = price.replace(/,/g, "");
+
   try {
     if (!userId) {
       res.status(400).json({ message: "Try again, an error occurred" });
@@ -108,7 +111,7 @@ export const addProperty = async (
       userId,
       title,
       location,
-      price,
+      price: formattedPrice.trim(),
       bedrooms,
       bathrooms,
       squareFeet,
@@ -119,6 +122,7 @@ export const addProperty = async (
       image: imageName,
     });
     console.log(property);
+    res.status(202).json({ message: "property added successfully" });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Server error", error });
@@ -179,5 +183,163 @@ export const removeProperty = async (
     res
       .status(500)
       .json({ message: "Error deleting property", error: error.message });
+  }
+};
+
+export const fetchProperty = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const propertyId = req.params.id;
+    const userProperty = await Property.findOne({ _id: propertyId });
+
+    if (userProperty) {
+      userProperty.image = await getSignedUrl(
+        s3,
+        new GetObjectCommand({
+          Bucket: bucketName,
+          Key: userProperty.image,
+        }),
+        { expiresIn: 60 } // 60 seconds
+      );
+
+      res.status(200).json(userProperty);
+      
+    } else {
+      res.status(404).json({ message: "Property not found" });
+    }
+
+  } catch (error) {
+    console.error("Error fetching user property:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const switchPropertyState = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { propertyId, status: propertyStatus } = req.body;
+
+    console.log(propertyStatus, "property", propertyId);
+    // updated value
+    let updatedValue =
+      propertyStatus === "Unavailable" ? "Available" : "Unavailable";
+
+    const updatedProperty = await Property.updateOne(
+      { _id: propertyId },
+      { status: updatedValue }
+    );
+    console.log(updatedProperty.modifiedCount, "modified");
+
+    res
+      .status(202)
+      .json({
+        message: "Property updated successfully",
+        updated: updateProperty,
+      });
+  } catch (error: any) {
+    console.error("Error switching status property", error);
+    res
+      .status(500)
+      .json({ message: "Error deleting property", error: error.message });
+  }
+};
+
+export const updateProperty = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const propertyId = req.params.id;
+  const userId = (req as any).user?.id; // Get the user ID from the token
+
+  try {
+    // First check if property exists and belongs to this user
+    const existingProperty = await Property.findOne({ _id: propertyId });
+
+    if (!existingProperty) {
+      res.status(404).json({
+        message: "Property not found or you don't have permission to edit it",
+      });
+      return;
+    }
+
+    // Get all the fields from the request body
+    const {
+      title,
+      location,
+      price,
+      bedrooms,
+      bathrooms,
+      squareFeet,
+      description,
+      phoneNumber,
+      type,
+      status,
+    } = req.body;
+
+    // Format the price if it exists
+    const formattedPrice = price ? price.replace(/,/g, "").trim() : undefined;
+
+    // Handle image upload if a new image is provided
+    let imageName = existingProperty.image; // Default to keeping the existing image
+
+    if (req.file) {
+      // Generate a new image name
+      imageName = randomImageName();
+
+      const params = {
+        Bucket: bucketName,
+        Key: imageName,
+        Body: req.file.buffer,
+        ContentType: req.file.mimetype,
+      };
+
+      try {
+        const command = new PutObjectCommand(params);
+        const response = await s3.send(command);
+        console.log("New image uploaded successfully", response);
+
+        // Optionally: Delete the old image from S3
+        if (existingProperty.image) {
+          const deleteParams = {
+            Bucket: bucketName,
+            Key: existingProperty.image,
+          };
+
+          const deleteCommand = new DeleteObjectCommand(deleteParams);
+          await s3.send(deleteCommand);
+          console.log("Old image deleted successfully");
+        }
+      } catch (error) {
+        console.error("Error handling image:", error);
+        // Continue with update even if image upload fails
+      }
+    }
+
+    const updatedProperty = await Property.findByIdAndUpdate(
+      propertyId,
+      {
+        title: title || existingProperty.title,
+        location: location || existingProperty.location,
+        price: formattedPrice || existingProperty.price,
+        bedrooms: bedrooms || existingProperty.bedrooms,
+        bathrooms: bathrooms || existingProperty.bathrooms,
+        squareFeet: squareFeet || existingProperty.squareFeet,
+        phoneNumber: phoneNumber || existingProperty.phoneNumber,
+        description: description || existingProperty.description,
+        type: type || existingProperty.type,
+        status: status || existingProperty.status,
+        image: imageName,
+      },
+      { new: true }
+    );
+
+    res.status(200).json({ message: "Property updated successfully" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Server error", error });
   }
 };

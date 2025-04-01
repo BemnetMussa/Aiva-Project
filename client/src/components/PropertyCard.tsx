@@ -70,7 +70,13 @@ const PropertyCard = ({
   const formattedPrice = price.toLocaleString();
 
   return (
-    <div className="w-[451px] h-[649px] bg-white rounded-xl overflow-hidden flex flex-col shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+<div
+  className={`w-[451px] h-[649px] bg-white rounded-xl overflow-hidden flex flex-col shadow-lg border
+    border-gray-100 hover:shadow-xl transition-shadow duration-300
+    ${status === "Available" ? "opacity-100" : "opacity-55 grayscale"}`}
+>
+
+    
       {/* Image Section with gradient overlay for better text visibility */}
       <div
         className="relative w-full h-[325px] overflow-hidden group"
@@ -107,9 +113,9 @@ const PropertyCard = ({
           className={`absolute top-4 left-4 px-3 py-1.5 text-white rounded-full text-xs font-semibold flex gap-1.5 items-center ${status === "Available" ? "bg-green-500" : "bg-gray-500"}`}
         >
           <div
-            className={`w-2 h-2 rounded-full ${status === "Available" ? "bg-green-200" : "bg-gray-300"}`}
+            className={`w-2 h-2  rounded-full ${status === "Available" ? "bg-green-200" : "bg-gray-300"}`}
           ></div>
-          <p className="font-medium">{status}</p>
+          <p className="font-semibold text-[15px]">{status}</p>
         </div>
 
         {/* Favorite Button with animation */}
