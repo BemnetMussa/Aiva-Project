@@ -71,7 +71,11 @@ export const getUserChats = async (
     })
       .populate("user1", "name email image")
       .populate("user2", "name email image")
-      .populate("lastMessage");
+      .populate({
+        path: "lastMessage",
+        select: "_id content messageType createdAt sender", // Fetch last message content
+      })
+      .sort({ updatedAt: -1 }); // Sort by latest chats
 
     if (!chats) {
       res.status(404).json({ message: "No chats found for this user" });

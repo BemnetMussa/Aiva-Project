@@ -35,10 +35,13 @@ const messageSchema = new mongoose.Schema(
     fileUrl: {
       type: String, // For media files
     },
-    readByRecipient: {
-      type: Boolean,
-      default: false,
-    },
+    readBy: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      }
+    ], // Changed to an array of User references
+    
   },
   { timestamps: true }
 );

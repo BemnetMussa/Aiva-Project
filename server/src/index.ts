@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./config/db";
+import setupSocket from "./utils/socket";
 import authRoutes from "./routes/authRouter";
 import propertyRoutes from "./routes/propertyRoutes";
 import favoritesRoutes from "./routes/favoritesRoutes";
@@ -12,17 +13,13 @@ import chatRoute from "./routes/chatRoute";
 import messageRoute from "./routes/messageRoute";
 import userRouter from "./routes/userRoutes";
 
-import { app, server } from "./utils/socket";
-
 dotenv.config();
 
+// Initialize Express app
+const app = express();
+
 // Middleware
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    credentials: true,
-  })
-);
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 
@@ -30,7 +27,7 @@ app.use(cookieParser());
 connectDB();
 
 const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+const upload = multer({ storage });
 
 // Routes
 app.use("/api/auth", authRoutes);
@@ -40,6 +37,9 @@ app.use("/api/categories", categoryRoute);
 app.use("/api/chat", chatRoute);
 app.use("/api/message", messageRoute);
 app.use("/api/user", userRouter);
+
+// Initialize Socket.io with existing app
+const { server } = setupSocket(app);
 
 // Start server
 const PORT = process.env.PORT || 5000;

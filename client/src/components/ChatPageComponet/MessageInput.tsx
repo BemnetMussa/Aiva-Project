@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addMessage, Message } from "../../redux/slices/chatSlice";
 import { RootState } from "../../redux/store";
+import socket from "../../socket";
 
 export const MessageInput = () => {
   const chats = useSelector((state: RootState) => state.chat);
@@ -24,7 +25,9 @@ export const MessageInput = () => {
       createdAt: new Date().toISOString(),
     };
 
+    socket.emit("sendMessage", newMessage);
     dispatch(addMessage(newMessage));
+
     setMessage("");
   };
 

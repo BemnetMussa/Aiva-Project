@@ -1,60 +1,74 @@
 import { Phone, Settings, Dot, Video, MessageCircle } from "lucide-react";
 import { MessageInput } from "./MessageInput";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../redux/store";
 import MessageDisplayer from "./MessageDisplay";
-import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
+import socket from "../../socket";
+import { useEffect } from "react";
+import { getChatMessages } from "../../redux/slices/chatSlice";
 
 export const ChatWindow = () => {
-  const { activeChat } = useSelector((state: RootState) => state.chat);
-  const chats = useSelector((state: RootState) => state.chat.chats);
+  const { activeChat, chats } = useSelector((state: RootState) => state.chat);
+  const currentChat = chats?.find((chat) => chat._id === activeChat);
+  const user = useSelector((state: RootState) => state.auth.user);
 
-  // Find the active chat using the activeChat ID
-  const currentChat = chats?.find((chat) => chat?._id === activeChat);
+  const chatId = currentChat?._id;
 
-  // Ensure that active chat exists
+  const dispatch = useDispatch<AppDispatch>();
+
+  // Determine the other user in the chat
+  const otherUser =
+    currentChat?.user1._id === user?._id
+      ? currentChat?.user2
+      : currentChat?.user1;
+
+  useEffect(() => {
+    if (chatId) {
+      socket.emit("joinChat", chatId); // Join the chat when opening it
+      console.log(`Joined chat: ${chatId}`);
+    }
+
+    return () => {
+      if (chatId) {
+        socket.emit("leaveChat", chatId); // Leave the chat when closing it
+        console.log(`Left chat: ${chatId}`);
+      }
+    };
+  }, [chatId]);
+
+  useEffect(() => {
+    dispatch(getChatMessages(chatId ?? ""));
+  }, [chatId, dispatch]);
+
   if (!currentChat) {
     return (
       <div className="flex-3 flex flex-col shadow-2xl">
         <div className="flex-7 flex justify-center items-center">
-          <div className="flex flex-col items-center justify-center gap-8">
-            <MessageCircle size={50} className="text-cyan-600" />
-            <span className="text-2xl font-bold text-gray-800">
-              Select a chat to start messaging
-            </span>
-          </div>
+          <MessageCircle size={50} className="text-cyan-600" />
+          <span className="text-2xl font-bold text-gray-800">
+            Select a chat to start messaging
+          </span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex-3 flex flex-col shadow-2xl">
-      {/* Header */}
+    <div className="flex-3 flex flex-col shadow-2xl h-full">
       <div className="flex-1 flex justify-between items-center mx-5">
         <div className="flex justify-between items-center gap-3">
           <Dot size={60} className="text-green-600" />
-
-          {/* User Image or Initials */}
-          {currentChat?.user2?.image ? (
-            <img
-              src={currentChat?.user2?.image}
-              alt={currentChat?.user2?.name}
-              className="w-12 h-12 rounded-full object-cover"
-            />
-          ) : (
-            <span className="mr-3 border flex justify-center items-center w-12 h-12 rounded-full border-gray-100 text-xl bg-gray-300 font-semibold cursor-pointer">
-              {currentChat?.user2?.name[0].toUpperCase()}
-            </span>
-          )}
-
+          <img
+            src={otherUser?.image || "/default-avatar.png"}
+            alt={otherUser?.name}
+            className="w-12 h-12 rounded-full"
+          />
           <span className="font-semibold tracking-wider text-xl">
-            {currentChat?.user2?.name}
+            {otherUser?.name}
           </span>
-
           <Settings size={18} className="ml-4 cursor-pointer" />
         </div>
 
-        {/* Call/Video Buttons */}
         <div className="flex justify-between items-center gap-5 text-cyan-500">
           <button className="cursor-pointer" aria-label="Phone call">
             <Phone />
@@ -65,23 +79,10 @@ export const ChatWindow = () => {
         </div>
       </div>
 
-      {/* Message Display */}
-      <div className="flex-7">
-        {activeChat ? (
-          <MessageDisplayer />
-        ) : (
-          <div className="flex justify-center items-center w-full h-full">
-            <div className="flex flex-col items-center justify-center gap-8">
-              <MessageCircle size={50} className="text-cyan-600" />
-              <span className="text-2xl font-bold text-gray-800">
-                Send Messages
-              </span>
-            </div>
-          </div>
-        )}
+      <div className="flex-7 overflow-y-auto">
+        <MessageDisplayer />
       </div>
 
-      {/* Message Input */}
       <MessageInput />
     </div>
   );

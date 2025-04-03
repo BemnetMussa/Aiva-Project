@@ -8,7 +8,13 @@ interface Chat {
   _id: string;
   user1: { _id: string; name: string; email: string; image: string };
   user2: { _id: string; name: string; email: string; image: string };
-  lastMessage?: { content: string };
+  lastMessage?: {
+    _id: string;
+    content: string;
+    messageType: "text";
+    createdAt: string;
+    sender: string;
+  };
   createdAt: string;
 }
 
@@ -94,33 +100,8 @@ export const getUserChats = createAsyncThunk(
         console.log(data.message);
         throw new Error(data.message || "Failed to fetch chats");
       }
-      return data;
-    } catch (error: any) {
-      console.log(error);
-      return rejectWithValue(error.message);
-    }
-  }
-);
 
-// Thunk to send message
-export const sendMessage = createAsyncThunk(
-  "chat/sendMessage",
-  async (
-    {
-      chatId,
-      sender,
-      content,
-    }: { chatId: string; sender: string; content: string },
-    { rejectWithValue }
-  ) => {
-    try {
-      const res = await fetch(`/api/message/send`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ chatId, sender, content }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
+      console.log("user data chat list from db ", data);
       return data;
     } catch (error: any) {
       console.log(error);
@@ -134,31 +115,13 @@ export const getChatMessages = createAsyncThunk(
   "chat/getChatMessages",
   async (chatId: string, { rejectWithValue }) => {
     try {
-      const res = await fetch(`/api/message/${chatId}`);
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
-      return data;
-    } catch (error: any) {
-      return rejectWithValue(error.message);
-    }
-  }
-);
-
-// Thunk to markMessagesAsRead
-export const markMessagesAsRead = createAsyncThunk(
-  "chat/markMessagesAsRead",
-  async (
-    { chatId, userId }: { chatId: string; userId: string },
-    { rejectWithValue }
-  ) => {
-    try {
-      const res = await fetch(`/api/message/read`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ chatId, userId }),
+      const res = await fetch(`http://localhost:5000/api/message/${chatId}`, {
+        method: "GET",
+        credentials: "include",
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
+      // console.log("message fetch", data);
       return data;
     } catch (error: any) {
       return rejectWithValue(error.message);
@@ -189,11 +152,19 @@ const chatSlice = createSlice({
     },
 
     addMessage: (state, action: PayloadAction<Message>) => {
-      const { chatId } = action.payload;
-      if (!state.messages[chatId]) {
-        state.messages[chatId] = [];
+      console.log("chat slice action payload for message", action.payload);
+      const message = action.payload;
+      if (!state.messages[message.chatId]) {
+        state.messages[message.chatId] = [];
       }
-      state.messages[chatId].push(action.payload);
+
+      // Prevent duplicate messages
+      if (
+        !state.messages[message.chatId].some((msg) => msg._id === message._id)
+      ) {
+        state.messages[message.chatId].push(message);
+        console.log(message);
+      }
     },
 
     setActiveChat: (state, action: PayloadAction<string | null>) => {
@@ -222,16 +193,41 @@ const chatSlice = createSlice({
         state.error = action.payload as string; // Store error message
       })
       // Handle successful message send
-      .addCase(sendMessage.fulfilled, (state, action) => {
-        const chatId = action.payload.chat._id;
-        if (!state.messages[chatId]) {
-          state.messages[chatId] = [];
-        }
-        state.messages[chatId].push(action.payload); // Add the new message to the current chat
-      })
+      // .addCase(sendMessage.fulfilled, (state, action) => {
+      //   const chatId = action.payload.chat._id;
+      //   if (!state.messages[chatId]) {
+      //     state.messages[chatId] = [];
+      //   }
+      //   state.messages[chatId].push(action.payload); // Add the new message to the current chat
+      // })
       // Handle fetching user chats
       .addCase(getUserChats.fulfilled, (state, action) => {
         state.chats = action.payload; // Update chat list with user chats
+
+        // Store last messages in messages state
+        action.payload.forEach((chat: Chat) => {
+          if (chat.lastMessage) {
+            if (!state.messages[chat._id]) {
+              state.messages[chat._id] = [];
+            }
+
+            // Ensure the last message is unique
+            const lastMessageExists = state.messages[chat._id].some(
+              (msg) => msg._id === chat.lastMessage?._id
+            );
+
+            if (!lastMessageExists) {
+              state.messages[chat._id].push({
+                _id: chat.lastMessage._id,
+                chatId: chat._id,
+                sender: chat.lastMessage.sender,
+                content: chat.lastMessage.content,
+                messageType: chat.lastMessage.messageType || "text",
+                createdAt: chat.lastMessage.createdAt,
+              });
+            }
+          }
+        });
       })
       .addCase(getUserChats.pending, (state) => {
         state.loading = true;

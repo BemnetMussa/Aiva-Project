@@ -177,7 +177,6 @@ const AddPropertyPage: React.FC<AddPropertyFormProps> = ({
                     <option value="">Select property type</option>
                     <option value="Sell">For Sell</option>
                     <option value="Rent">For Rent</option>
-                  
                   </select>
                 </div>
 
@@ -194,7 +193,6 @@ const AddPropertyPage: React.FC<AddPropertyFormProps> = ({
                     <option value="">Select status</option>
                     <option value="Available">Available</option>
                     <option value="Unavailable">Unavailable</option>
-    
                   </select>
                 </div>
 
