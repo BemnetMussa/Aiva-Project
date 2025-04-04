@@ -45,25 +45,28 @@ const MessageDisplayer = () => {
 
   return (
     <div className="flex-1 p-4 w-full h-full">
-      {sortedMessages.map((msg: any) => (
-        <div
-          key={msg._id}
-          className={`flex p-2 my-2 ${
-            msg.sender._id === user?._id ? "justify-end" : "justify-start"
-          }`}
-        >
-          <span
-            className={`p-2 rounded-md ${
-              msg.sender._id === user?._id
-                ? "bg-blue-500 text-white"
-                : "bg-gray-200 text-black"
-            } max-w-xs`}
+      {sortedMessages.map((msg: any) => {
+        const sender =
+          msg.sender && msg.sender._id ? msg.sender : { _id: msg.sender };
+        return (
+          <div
+            key={msg._id}
+            className={`flex p-2 my-2 ${
+              sender._id === user?._id ? "justify-end" : "justify-start"
+            }`}
           >
-            {msg.content}
-          </span>
-        </div>
-      ))}
-
+            <span
+              className={`p-2 rounded-md ${
+                sender._id === user?._id
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 text-black"
+              } max-w-xs`}
+            >
+              {msg.content}
+            </span>
+          </div>
+        );
+      })}
       {/* Scroll to latest message */}
       <div ref={messagesEndRef} />
     </div>

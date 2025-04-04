@@ -12,6 +12,7 @@ import { getUserChats } from "../src/redux/slices/chatSlice";
 import { AppDispatch, RootState } from "../src/redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
+import { ChatWindow } from "./components/ChatPageComponet/ChatWindow";
 
 const App = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -36,7 +37,9 @@ const App = () => {
           <Route path="/accommodations" element={<HostAccommodation />} />
           <Route path="/earnings" element={<div>Earnings Page</div>} />
           <Route path="/favorites" element={<FavoritesPage />} />
-          <Route path="/chat" element={<ChatPage />} />
+          <Route path="/chat" element={<ChatPage />}>
+            <Route path=":chatId" element={<ChatWindow />} />
+          </Route>
           <Route
             path="/addproperty"
             element={

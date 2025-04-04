@@ -11,7 +11,6 @@ export const ChatWindow = () => {
   const { activeChat, chats } = useSelector((state: RootState) => state.chat);
   const currentChat = chats?.find((chat) => chat._id === activeChat);
   const user = useSelector((state: RootState) => state.auth.user);
-
   const chatId = currentChat?._id;
 
   const dispatch = useDispatch<AppDispatch>();

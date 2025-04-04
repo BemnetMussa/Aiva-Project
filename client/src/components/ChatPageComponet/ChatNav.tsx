@@ -7,12 +7,19 @@ import { setSearchTerm, searchUsers } from "../../redux/slices/searchSlice";
 import { useEffect } from "react";
 import { createOrGetChat } from "../../redux/slices/chatSlice";
 import { useDebounce } from "../../redux/hooks";
+import { setActiveChat } from "../../redux/slices/chatSlice";
+
+import { useNavigate } from "react-router-dom";
 
 export const ChatNav = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { searchTerm, searchResults, loading, error } = useSelector(
     (state: RootState) => state.search
   );
+
+  const navigate = useNavigate();
+  const chats = useSelector((state: RootState) => state.chat.chats);
+  const user = useSelector((state: RootState) => state.auth.user);
 
   // Debounce the search term to avoid too many API calls
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
@@ -27,10 +34,40 @@ export const ChatNav = () => {
     dispatch(setSearchTerm(e.target.value));
   };
 
-  const handleSelectUser = (targetUser: { _id: string; name: string }) => {
+  // opening chat windows
+  const handleSelectUser = async (targetUser: {
+    _id: string;
+    name: string;
+  }) => {
+    if (!user) {
+      console.error("Current user is not authenticated");
+      return;
+    }
+
     const targetUserId = targetUser._id;
-    // Handle user selection (e.g., open chat)
-    dispatch(createOrGetChat(targetUserId));
+
+    try {
+      // Check if chat already exists with this user
+      let existingChat = chats.find(
+        (chat) =>
+          (chat.user1._id === user._id && chat.user2._id === targetUserId) ||
+          (chat.user1._id === targetUserId && chat.user2._id === user._id)
+      );
+
+      // If no existing chat, create one
+      if (!existingChat) {
+        const newChat = await dispatch(createOrGetChat(targetUserId)).unwrap();
+        existingChat = newChat;
+      }
+
+      // Now, open the chat (whether it was found or created)
+      if (existingChat?._id) {
+        dispatch(setActiveChat(existingChat._id));
+        navigate(`/chat/${existingChat._id}`); // Immediately open chat
+      }
+    } catch (error) {
+      console.error("Error creating or retrieving chat:", error);
+    }
   };
 
   return (

@@ -44,6 +44,7 @@ export const createOrGetChat = async (
     }
 
     res.status(200).json({ chat });
+    console.log(chat);
   } catch (error) {
     console.log(error);
     res.status(500).json({

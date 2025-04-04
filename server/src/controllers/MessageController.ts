@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import Message from "../models/Message";
-import Chat from "../models/Chat";
 
 // Get All Messages in a Chat
 export const getChatMessages = async (

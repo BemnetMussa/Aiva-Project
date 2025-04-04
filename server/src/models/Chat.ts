@@ -28,6 +28,9 @@ const ChatSchema = new Schema<IChat>(
   { timestamps: true }
 );
 
+// Ensure uniqueness for chat between two users
+ChatSchema.index({ user1: 1, user2: 1 }, { unique: true });
+
 const Chat = mongoose.model<IChat>("Chat", ChatSchema);
 
 export default Chat;

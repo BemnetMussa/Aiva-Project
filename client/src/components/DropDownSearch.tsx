@@ -1,7 +1,3 @@
-import { useDispatch, useSelector } from "react-redux";
-import { createOrGetChat, setActiveChat } from "../redux/slices/chatSlice";
-import { AppDispatch, RootState } from "../redux/store";
-
 interface User {
   _id: string;
   name: string;
@@ -18,13 +14,8 @@ const DropDownSearch: React.FC<DropdownListProps> = ({
   searchResults,
   onSelectUser,
 }) => {
-  const dispatch = useDispatch<AppDispatch>();
-  const chats = useSelector((state: RootState) => state.chat.chats);
-  const chatId = chats?.map((chat) => chat?._id);
-
   const handleSelectUser = (user: User) => {
     onSelectUser(user);
-    dispatch(createOrGetChat(user._id));
   };
 
   return (
