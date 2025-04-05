@@ -35,6 +35,12 @@ interface ChatState {
   activeChat: string | null;
   error: string | null;
   loading: boolean;
+  typingUsers: {
+    [chatId: string]: {
+      userName: string;
+      senderId: string;
+    } | null;
+  }; // NEW: typing status per chat
 }
 
 // Create or get a chat between two users
@@ -135,6 +141,7 @@ const initialState: ChatState = {
   activeChat: null,
   error: null,
   loading: false,
+  typingUsers: {},
 };
 
 const chatSlice = createSlice({
@@ -169,6 +176,23 @@ const chatSlice = createSlice({
 
     setActiveChat: (state, action: PayloadAction<string | null>) => {
       state.activeChat = action.payload;
+    },
+    // typing indicator
+    setTyping: (
+      state,
+      action: PayloadAction<{
+        chatId: string;
+        userName: string;
+        senderId: string;
+      }>
+    ) => {
+      state.typingUsers[action.payload.chatId] = {
+        userName: action.payload.userName,
+        senderId: action.payload.senderId,
+      };
+    },
+    stopTyping: (state, action: PayloadAction<{ chatId: string }>) => {
+      state.typingUsers[action.payload.chatId] = null;
     },
   },
   extraReducers: (builder) => {
@@ -250,8 +274,14 @@ const chatSlice = createSlice({
   },
 });
 
-export const { setChats, setMessages, addMessage, setActiveChat } =
-  chatSlice.actions;
+export const {
+  setChats,
+  setMessages,
+  addMessage,
+  setActiveChat,
+  setTyping,
+  stopTyping,
+} = chatSlice.actions;
 export type { Message, Chat };
 
 export default chatSlice.reducer;

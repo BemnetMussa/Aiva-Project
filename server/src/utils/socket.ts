@@ -5,6 +5,11 @@ import Message from "../models/Message";
 import Chat from "../models/Chat";
 import { Types } from "mongoose";
 
+interface TypingData {
+  userName: string;
+  senderId: string;
+}
+
 const setupSocket = (app: Express) => {
   const server = http.createServer(app);
   const io = new Server(server, {
@@ -13,6 +18,10 @@ const setupSocket = (app: Express) => {
       credentials: true,
     },
   });
+
+  const typingUsers: {
+    [key: string]: TypingData;
+  } = {};
 
   io.on("connection", (socket) => {
     console.log("New client connected");
@@ -86,6 +95,28 @@ const setupSocket = (app: Express) => {
       } catch (error) {
         console.error("Error marking message as read: ", error);
       }
+    });
+
+    socket.on("typing", (data) => {
+      const { chatId, senderId, userName } = data;
+      typingUsers[chatId] = {
+        userName,
+        senderId,
+      };
+      socket.broadcast.to(chatId).emit("displayTyping", {
+        userName,
+        chatId,
+        senderId,
+      });
+    });
+
+    socket.on("stopTyping", ({ chatId }) => {
+      delete typingUsers[chatId];
+      socket.broadcast.to(chatId).emit("displayTyping", {
+        chatId,
+        userName: "",
+        senderId: "",
+      });
     });
 
     // You can also handle other events like disconnect here

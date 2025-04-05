@@ -1,5 +1,5 @@
 import { Ellipsis, Mic, MoveRight, Paperclip, Smile } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addMessage, Message } from "../../redux/slices/chatSlice";
 import { RootState } from "../../redux/store";
@@ -10,6 +10,31 @@ export const MessageInput = () => {
   const user = useSelector((state: RootState) => state.auth.user);
   const [message, setMessage] = useState("");
   const dispatch = useDispatch();
+
+  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleTyping = () => {
+    if (!chats.activeChat || !user) return;
+    socket.emit("typing", {
+      chatId: chats.activeChat,
+      userName: user.name,
+      senderId: user._id,
+    });
+
+    // Debounce stopTyping event (clear previous timeout)
+
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+
+    typingTimeoutRef.current = setTimeout(() => {
+      socket.emit("stopTyping", {
+        chatId: chats.activeChat,
+        senderId: "",
+        userName: "",
+      });
+    }, 2000); // Stops typing after 2s of inactivity
+  };
 
   const handleMessage = (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,12 +53,21 @@ export const MessageInput = () => {
     socket.emit("sendMessage", newMessage);
     dispatch(addMessage(newMessage));
 
+    // Stop typing event
+    socket.emit("stopTyping", {
+      chatId: chats.activeChat,
+      senderId: "",
+      userName: "",
+    });
     setMessage("");
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       handleMessage(e as any); // Handle message send on Enter (without Shift)
+    } else {
+      // Trigger typing indicator
+      handleTyping();
     }
   };
   return (
