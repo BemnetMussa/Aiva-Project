@@ -26,7 +26,7 @@ const MessageDisplayer = () => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [chatMessages]);
+  }, [chatMessages, typing]);
 
   useEffect(() => {
     socket.on("newMessage", (newMessage: Message) => {
@@ -90,7 +90,7 @@ const MessageDisplayer = () => {
 
       {/* Typing Indicator (Displayed above messages) */}
       {typingInfo?.userName && typingInfo?.userName !== user?.name && (
-        <div className="flex p-2 text-sm italic text-gray-500 ml-2 border-2 border-black">
+        <div className="flex p-2 text-sm italic text-gray-500 ml-2">
           {typingInfo.userName} is typing...
         </div>
       )}
