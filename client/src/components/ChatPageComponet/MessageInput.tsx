@@ -1,14 +1,17 @@
 import { Ellipsis, Mic, MoveRight, Paperclip, Smile } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addMessage, Message } from "../../redux/slices/chatSlice";
 import { RootState } from "../../redux/store";
 import socket from "../../socket";
+import EmojiPicker from "emoji-picker-react";
 
 export const MessageInput = () => {
   const chats = useSelector((state: RootState) => state.chat);
   const user = useSelector((state: RootState) => state.auth.user);
   const [message, setMessage] = useState("");
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [inputFocus, setInputFocus] = useState(false);
   const dispatch = useDispatch();
 
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -36,6 +39,11 @@ export const MessageInput = () => {
     }, 2000); // Stops typing after 2s of inactivity
   };
 
+  const handleEmojiClick = (emojiData: any) => {
+    setMessage((prev) => prev + emojiData.emoji);
+    setShowEmojiPicker(false);
+  };
+
   const handleMessage = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -60,33 +68,56 @@ export const MessageInput = () => {
       userName: "",
     });
     setMessage("");
+    setInputFocus(false);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       handleMessage(e as any); // Handle message send on Enter (without Shift)
+      setInputFocus(false);
     } else {
       // Trigger typing indicator
       handleTyping();
     }
   };
   return (
-    <div className="flex-1 mr-40 ml-5 flex items-center gap-5">
-      <div className="flex-2 flex items-center gap-3 bg-gray-100 px-3 py-2 border border-gray-100 rounded-full">
-        <Smile size={18} />
+    <div className="relative flex-1 mr-40 ml-5 flex items-center gap-5">
+      {/* Emoji Picker (absolutely positioned, outside the input box) */}
+      {showEmojiPicker && (
+        <div className="absolute bottom-14 left-0 z-50">
+          <EmojiPicker onEmojiClick={handleEmojiClick} />
+        </div>
+      )}
+
+      <div
+        className={`flex-2 flex items-center gap-3 bg-gray-100 px-3 py-2 border- border-gray-100 rounded-full ${
+          showEmojiPicker || inputFocus ? "border-gray-200 border-2" : ""
+        }`}
+      >
+        {/* Emoji Button */}
+        <button onClick={() => setShowEmojiPicker(!showEmojiPicker)}>
+          <Smile size={18} />
+        </button>
+
+        {/* Input Field */}
         <form className="flex w-full" onSubmit={handleMessage}>
           <input
             type="text"
             value={message}
             onKeyDown={handleKeyPress}
-            onChange={(e) => setMessage(e.target.value)}
-            className="w-full  border-none focus:ring-0 focus:outline-none"
+            onChange={(e) => {
+              setMessage(e.target.value);
+              setInputFocus(true);
+            }}
+            className="w-full border-none focus:ring-0 focus:outline-none bg-transparent"
           />
           <button type="submit" className="cursor-pointer">
-            <MoveRight className="text-cyan-700 " size={22} />
+            <MoveRight className="text-cyan-700" size={22} />
           </button>
         </form>
       </div>
+
+      {/* Right Icons */}
       <Mic className="text-cyan-500" />
       <Paperclip className="text-cyan-500" />
       <Ellipsis className="text-cyan-500" />

@@ -75,11 +75,11 @@ const MessageDisplayer = () => {
               }`}
             >
               <span
-                className={`p-2 rounded-md ${
+                className={`p-2 rounded-md max-w-lg break-words whitespace-pre-wrap ${
                   sender._id === user?._id
                     ? "bg-blue-500 text-white"
                     : "bg-gray-200 text-black"
-                } max-w-xs`}
+                }`}
               >
                 {msg.content}
               </span>
